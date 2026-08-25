@@ -18,6 +18,7 @@
  */
 
 const OBSERVER_PREFIX = "observer:";
+const OBSERVER_ATTEMPT_PREFIX = "observer-attempt:";
 const OBSERVER_NONCE_PREFIX = "observer-nonce:";
 
 /** Persisted state of one tracked set. `true` is the pre-"pending" legacy encoding of observed. */
@@ -115,9 +116,9 @@ export class ObserverTracker<T, V> {
   #options: ObserverTrackerOptions<T, V>;
 
   constructor(kv: ObserverKv, options: ObserverTrackerOptions<T, V>) {
-    if (options.setPrefix === OBSERVER_PREFIX || options.setPrefix === OBSERVER_NONCE_PREFIX) {
-      throw new Error(`setPrefix must not collide with a reserved prefix (${OBSERVER_PREFIX}, ` +
-        `${OBSERVER_NONCE_PREFIX})`);
+    let reserved = [OBSERVER_PREFIX, OBSERVER_ATTEMPT_PREFIX, OBSERVER_NONCE_PREFIX];
+    if (reserved.includes(options.setPrefix)) {
+      throw new Error(`setPrefix must not collide with a reserved prefix (${reserved.join(", ")})`);
     }
     if ((options.hasAccess === undefined) === (options.verifyBatch === undefined)) {
       throw new Error("Configure exactly one observer access verifier");
@@ -159,10 +160,13 @@ export class ObserverTracker<T, V> {
         .map(([key]) => this.#options.decode(key.slice(prefix.length)));
   }
 
-  /** The observers admitted so far, paired with the verifier each was admitted with. */
+  /** Canonical and currently-staged observers, paired with their verifiers. */
   *observers(): IterableIterator<[string, V]> {
     for (let [key, verifier] of this.#kv.list<V>({ prefix: OBSERVER_PREFIX })) {
       yield [key.slice(OBSERVER_PREFIX.length), verifier];
+    }
+    for (let [key, verifier] of this.#kv.list<V>({ prefix: OBSERVER_ATTEMPT_PREFIX })) {
+      yield [key.slice(OBSERVER_ATTEMPT_PREFIX.length), verifier];
     }
   }
 
@@ -233,11 +237,8 @@ export class ObserverTracker<T, V> {
   }
 
   /**
-   * Admits `id` as an observer, or throws naming the first set they cannot reach.
-   *
-   * A bulk verifier is staged in storage before its single RPC. A disclosure interleaved with that
-   * RPC therefore checks the joining observer itself, closing the admission race without a second
-   * full re-check. Per-set verification retains the legacy re-list loop.
+   * Admits `id` as an observer, or throws naming the first set they cannot reach. Bulk verification
+   * stages the candidate, then re-lists until every set has been checked before promotion.
    */
   async addObserver(id: string, verifier: V): Promise<void> {
     let verifyBatch = this.#options.verifyBatch;
@@ -254,29 +255,44 @@ export class ObserverTracker<T, V> {
     verifyBatch: (verifier: V, values: readonly T[]) => Promise<ObserverBatchResult>,
   ): Promise<void> {
     let observerKey = `${OBSERVER_PREFIX}${id}`;
+    let attemptKey = `${OBSERVER_ATTEMPT_PREFIX}${id}`;
     let nonceKey = `${OBSERVER_NONCE_PREFIX}${id}`;
-    // Ownership token, not the verifier itself: Durable Object KV serializes on put and
-    // deserializes on get, so a reference comparison against the in-memory stub is always false.
     let nonce = crypto.randomUUID();
-    this.#kv.put(observerKey, verifier);
+    let checked = new Set<string>();
+    let needsBaselineCheck = true;
+    this.#kv.put(attemptKey, verifier);
     this.#kv.put(nonceKey, nonce);
 
     try {
-      let tracked = this.listTracked();
-      let result = await verifyBatch(verifier, tracked);
-      if (result.allowed.length !== tracked.length) {
-        throw new Error("Bulk observer verification must return one result per set");
+      for (;;) {
+        let pending = this.listTracked().filter(
+          value => !checked.has(this.#options.encode(value)));
+        if (!needsBaselineCheck && pending.length === 0) {
+          if (this.#kv.get<string>(nonceKey) !== nonce) {
+            throw new Error("Observer admission was superseded by a newer attempt");
+          }
+          this.#kv.put(observerKey, verifier);
+          this.#kv.delete(attemptKey);
+          this.#kv.delete(nonceKey);
+          return;
+        }
+        needsBaselineCheck = false;
+
+        let result = await verifyBatch(verifier, pending);
+        if (this.#kv.get<string>(nonceKey) !== nonce) {
+          throw new Error("Observer admission was superseded by a newer attempt");
+        }
+        if (result.allowed.length !== pending.length) {
+          throw new Error("Bulk observer verification must return one result per set");
+        }
+        if (!result.baselineAllowed) throw new Error(this.#options.baselineDeniedMessage);
+        let deniedIndex = result.allowed.indexOf(false);
+        if (deniedIndex >= 0) throw new Error(this.#options.deniedMessage(pending[deniedIndex]));
+        for (let value of pending) checked.add(this.#options.encode(value));
       }
-      if (!result.baselineAllowed) throw new Error(this.#options.baselineDeniedMessage);
-      let deniedIndex = result.allowed.indexOf(false);
-      if (deniedIndex >= 0) throw new Error(this.#options.deniedMessage(tracked[deniedIndex]));
-      if (this.#kv.get<string>(nonceKey) !== nonce) {
-        throw new Error("Observer admission was superseded by a newer attempt");
-      }
-      this.#kv.delete(nonceKey);
     } catch (error) {
       if (this.#kv.get<string>(nonceKey) === nonce) {
-        this.#kv.delete(observerKey);
+        this.#kv.delete(attemptKey);
         this.#kv.delete(nonceKey);
       }
       throw error;
@@ -308,6 +324,7 @@ export class ObserverTracker<T, V> {
 
   removeObserver(id: string): void {
     this.#kv.delete(`${OBSERVER_PREFIX}${id}`);
+    this.#kv.delete(`${OBSERVER_ATTEMPT_PREFIX}${id}`);
     this.#kv.delete(`${OBSERVER_NONCE_PREFIX}${id}`);
   }
 }

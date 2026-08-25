@@ -23,11 +23,6 @@ export const IDENTITY_SCOPES = [
   "https://www.googleapis.com/auth/userinfo.email",
 ];
 
-/**
- * Scopes for sign-in only, where the resulting grant is transient. Identical to
- * {@link IDENTITY_SCOPES}: verifying an email needs no resource access.
- */
-export const AUTH_SCOPES = IDENTITY_SCOPES;
 
 /** A whole Gmail mailbox, optionally narrowed to one search or label. */
 export const GMAIL_RESOURCE: SupportedResource = {
@@ -81,7 +76,8 @@ export const GOOGLE_DRIVE_RESOURCE: SupportedResource = {
   title: "Google Drive Account",
   description:
       "Find files and folders anywhere this Google account can read in Drive, including shared " +
-      "drives it belongs to.",
+      "drives. Full-text search examines indexed file content, descriptions, and OCR text; " +
+      "results contain metadata only.",
   grantable: true,
 };
 
@@ -209,8 +205,7 @@ export function hasDriveResourceGrant(resourceUrlPatterns: readonly string[]): b
 }
 
 /** Rejects any pattern that is not a known grantable resource. */
-export function validateResourceUrlPatterns(resourceUrlPatterns?: string[]): void {
-  if (resourceUrlPatterns === undefined) return;
+export function validateResourceUrlPatterns(resourceUrlPatterns: readonly string[]): void {
 
   let known = new Set(RESOURCE_SCOPES.map(entry => entry.resource.urlPattern));
   let unknown = resourceUrlPatterns.filter(pattern => !known.has(pattern));
@@ -219,18 +214,13 @@ export function validateResourceUrlPatterns(resourceUrlPatterns?: string[]): voi
   }
 }
 
-/**
- * The OAuth scopes to request for the given grantable resource `urlPattern`s.
- *
- * `undefined` means every resource, which is distinct from `[]` (identity scopes only).
- */
-export function resourceUrlPatternsToOAuthScopes(resourceUrlPatterns?: string[]): string[] {
+/** The OAuth scopes required by the explicit grantable resource `urlPattern`s. */
+export function resourceUrlPatternsToOAuthScopes(resourceUrlPatterns: readonly string[]): string[] {
   validateResourceUrlPatterns(resourceUrlPatterns);
 
   let scopes = new Set<string>(IDENTITY_SCOPES);
   for (let entry of RESOURCE_SCOPES) {
-    if (resourceUrlPatterns === undefined ||
-        resourceUrlPatterns.includes(entry.resource.urlPattern)) {
+    if (resourceUrlPatterns.includes(entry.resource.urlPattern)) {
       for (let scope of entry.scopes) scopes.add(scope);
     }
   }
