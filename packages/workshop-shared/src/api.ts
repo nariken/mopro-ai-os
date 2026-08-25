@@ -1254,8 +1254,10 @@ export type GadgetMetadata = {
   role?: CollaboratorRole;
 
   /**
-   * True when the gadget has observed data marked as share-prohibited. Such gadgets can no longer
-   * be shared with additional users or links.
+   * True when the gadget has observed data marked as containing restricted data (see
+   * `ObservationDescription.containsRestrictedData`). Such gadgets can still be shared, but
+   * collaborators must be verified (per gatekeeper) to have access to the same data, and the
+   * workspace can no longer perform actions or fetch from the public web.
    */
   containsRestrictedData?: boolean;
 
@@ -3966,6 +3968,31 @@ export type PermissionEdge = {
    * resolves to this id, so redeeming any of them yields this one edge.
    */
   keyId: string;
+
+  /**
+   * Present while the redeeming open()'s observer verification has not yet succeeded. A pending
+   * edge grants no authority to anyone -- only the open() that performed the redemption counts
+   * it, to compute the role it is verifying for. Verification success confirms the edge (clears
+   * the flag); failure severs it -- but only once every concurrently-redeeming open()'s claim is
+   * withdrawn (see `pendingAttempts`). A stale pending edge left behind by a crashed open() is
+   * inert and self-heals: the next redemption of the same link re-verifies and settles it. Edges
+   * written before this field existed lack it and read as confirmed.
+   */
+  pending?: true;
+
+  /**
+   * The claims of every open() currently redeeming this link -- one opaque id per attempt,
+   * pushed by `redeemShareKey` and set whenever `pending` is. Concurrent redemptions of one link
+   * share this single edge, so a failed attempt's revert removes only its own claim and severs
+   * the edge only when none remain; otherwise a failure landing inside a sibling's verification
+   * window would yank the edge out from under it (a transient denial, or a confirm-time re-add
+   * at the link's full role rather than the narrower role the sibling verified). Confirming
+   * clears the claims along with `pending`: a real grant supersedes them all. A crashed open()'s
+   * stale claim can leave a pending edge lingering -- harmless, since pending edges grant
+   * nothing, adoption keeps working, and the next successful confirm clears everything.
+   * Bookkeeping only, confers no authority.
+   */
+  pendingAttempts?: string[];
 });
 
 /** Information about a single collaborator, returned by list/add operations. */
