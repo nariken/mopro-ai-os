@@ -472,7 +472,7 @@ for (const gk of gatekeepers) {
 
   // For local testing, create an account named "admin" to test admin features.
   config.vars = config.vars || {};
-  config.vars.ADMINS = ["admin"];
+  config.vars.ADMINS = ["admin", "nariken"];
 
   // Pass through the optional OAuth sign-in / AI Gateway billing env vars from the shell
   // environment, so you can run e.g.

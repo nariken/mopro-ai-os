@@ -14,6 +14,7 @@
     "preview:sweep": "node scripts/preview/preview.ts sweep",
     "dev-client": "cd packages/workshop-frontend && pnpm run dev",
     "dev-server": "node scripts/run-dev-server.ts",
+    "codex-bridge": "node scripts/codex-subscription-bridge.ts",
     "clean": "vp run -r clean",
     "lint:check": "vp lint",
     "lint:fix": "vp lint --fix",

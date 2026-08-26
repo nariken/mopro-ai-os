@@ -22,6 +22,7 @@ const PROVIDER_LABELS: Record<AiModelProvider, string> = {
   google: 'Google',
   cloudflare: 'Cloudflare Workers AI',
   ollama: 'Ollama',
+  codex: 'Codex Subscription (local)',
 }
 
 // Placeholder hinting at the shape of each provider's API token.
@@ -31,6 +32,7 @@ const API_TOKEN_PLACEHOLDERS: Record<AiModelProvider, string> = {
   google: 'AIza...',
   cloudflare: 'Cloudflare API token',
   ollama: '(optional)',
+  codex: '(uses Codex login)',
 }
 
 // Example used in the custom-model placeholders for providers that have no suggested models
@@ -144,7 +146,9 @@ export default function AddModelModal({ visible, onCancel, onSuccess, authentica
     }
     setApiToken('')
     setAccountId('')
-    setApiUrl(sel.provider === 'ollama' ? 'http://localhost:11434' : '')
+    setApiUrl(sel.provider === 'ollama'
+      ? 'http://localhost:11434'
+      : sel.provider === 'codex' ? 'http://127.0.0.1:8788' : '')
   }
 
   const validate = (): boolean => {
@@ -160,10 +164,11 @@ export default function AddModelModal({ visible, onCancel, onSuccess, authentica
     }
 
     const isOllama = selection?.provider === 'ollama'
+    const isCodex = selection?.provider === 'codex'
     const isCloudflare = selection?.provider === 'cloudflare'
     const showCredentials = !gatewayMode
 
-    if (showCredentials && selection && !isOllama && !apiToken.trim()) {
+    if (showCredentials && selection && !isOllama && !isCodex && !apiToken.trim()) {
       newErrors.apiToken = 'Please enter your API token'
     }
 
@@ -218,6 +223,7 @@ export default function AddModelModal({ visible, onCancel, onSuccess, authentica
   const example = selection ? exampleModel(selection.provider) : null
   const isOllama = selection?.provider === 'ollama'
   const isCloudflare = selection?.provider === 'cloudflare'
+  const isCodex = selection?.provider === 'codex'
   const showCredentials = !gatewayMode
 
   // Group options by provider for rendering with visual separators.
@@ -308,7 +314,7 @@ export default function AddModelModal({ visible, onCancel, onSuccess, authentica
           )}
 
           {/* API Token */}
-          {showCredentials && selection && (
+          {showCredentials && selection && !isCodex && (
             <SensitiveInput
               label="API Token"
               placeholder={API_TOKEN_PLACEHOLDERS[selection.provider]}
@@ -326,6 +332,16 @@ export default function AddModelModal({ visible, onCancel, onSuccess, authentica
             />
           )}
 
+          {showCredentials && isCodex && (
+            <Input
+              label="Local bridge URL"
+              placeholder="http://127.0.0.1:8788"
+              description="Uses the ChatGPT account currently signed in through the local Codex CLI"
+              value={apiUrl}
+              onChange={(e) => setApiUrl(e.target.value)}
+            />
+          )}
+
           {/* Ollama API URL (always visible for Ollama) */}
           {showCredentials && isOllama && (
             <Input
@@ -340,7 +356,7 @@ export default function AddModelModal({ visible, onCancel, onSuccess, authentica
           )}
 
           {/* Advanced Settings for non-Ollama, non-Cloudflare providers */}
-          {showCredentials && selection && !isOllama && !isCloudflare && (
+          {showCredentials && selection && !isOllama && !isCloudflare && !isCodex && (
             <Collapsible.Root
               open={advancedOpen}
               onOpenChange={setAdvancedOpen}
