@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 320" role="img" aria-labelledby="title">
+  <title id="title">MOPRO AI OS</title>
+  <g transform="translate(20 8) scale(.59)">
+    <path fill="#252B8F" d="M48 346a28 28 0 0 1 14-24l130-75a28 28 0 0 1 28 0l76 44 63-36a28 28 0 0 1 42 24v61a28 28 0 0 1-14 24l-159 92a28 28 0 0 1-28 0L62 370a28 28 0 0 1-14-24Z"/>
+    <path fill="#7B6FE8" d="M80 260a28 28 0 0 1 14-24l130-75a28 28 0 0 1 28 0l76 44 63-36a28 28 0 0 1 42 24v61a28 28 0 0 1-14 24l-159 92a28 28 0 0 1-28 0L94 284a28 28 0 0 1-14-24Z"/>
+    <path fill="#D8D2FF" d="M112 174a28 28 0 0 1 14-24l130-75a28 28 0 0 1 28 0l76 44 63-36a28 28 0 0 1 42 24v61a28 28 0 0 1-14 24l-159 92a28 28 0 0 1-28 0l-138-86a28 28 0 0 1-14-24Z"/>
+    <rect width="170" height="118" x="294" y="35" fill="#FF4F32" rx="28" transform="rotate(30 379 94)"/>
+  </g>
+  <text x="350" y="200" fill="#252B8F" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="104" font-weight="800" letter-spacing="-4">MOPRO</text>
+  <text x="705" y="200" fill="#FF4F32" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="104" font-weight="800" letter-spacing="-4">AI</text>
+  <text x="835" y="200" fill="#252B8F" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="104" font-weight="800" letter-spacing="-4">OS</text>
+</svg>

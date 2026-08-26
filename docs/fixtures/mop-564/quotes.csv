@@ -1,0 +1,7 @@
+quote_id,customer,submitted_at,status,amount
+Q-001,Alpha商事,2026-08-10,pending,120000
+Q-002,Beta工業,2026-08-19,pending,80000
+Q-003,Gamma社,2026-08-18,accepted,210000
+Q-004,Delta合同会社,2026-08-01,pending,450000
+Q-005,Epsilon社,2026-08-20,pending,95000
+Q-006,Zeta株式会社,2026-08-17,review,300000

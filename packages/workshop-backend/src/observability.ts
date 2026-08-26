@@ -19,6 +19,8 @@ export type WorkshopObservabilityFields = {
   gatekeeperId: number | string;
   logBytes: number;
   modelId: string;
+  modelProvider: string;
+  modelRoute: "subscription" | "api";
   observerId: string;
   operation: string;
   outcome: "ok" | "error" | "usage_limit" | "callbacks_stalled" | "no_email" | "signups_disabled";
@@ -30,6 +32,7 @@ export type WorkshopObservabilityFields = {
   statusCode: number;
   statusText: string;
   toolCallId: string;
+  toolCallCount: number;
   toolName: string;
   vendorId: string;
 };

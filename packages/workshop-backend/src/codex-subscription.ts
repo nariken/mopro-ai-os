@@ -3,6 +3,9 @@ import type {
 } from "@earendil-works/pi-ai";
 import { createAssistantMessageEventStream } from "@earendil-works/pi-ai";
 import type { AiModelConfig } from "@gadgets/workshop-shared/api";
+import { createWorkshopLogger } from "./observability";
+
+const logger = createWorkshopLogger("workshop.ai.subscription");
 
 type BridgeResponse = {
   content: string;
@@ -77,6 +80,7 @@ export function createCodexSubscriptionHandle(config: AiModelConfig): {
 
 function streamCodex(model: Model<Api>, context: Context): AssistantMessageEventStream {
   const stream = createAssistantMessageEventStream();
+  const startedAt = Date.now();
   const output: AssistantMessage = {
     role: "assistant", content: [], api: model.api, provider: model.provider, model: model.id,
     usage: ZERO_USAGE, stopReason: "pending", timestamp: Date.now(),
@@ -90,7 +94,11 @@ function streamCodex(model: Model<Api>, context: Context): AssistantMessageEvent
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ model: model.id.replace(/^codex:/, ""), context }),
       });
-      if (!response.ok) throw new Error(`Codex bridge returned ${response.status}: ${await response.text()}`);
+      if (!response.ok) {
+        // The bridge body can contain provider diagnostics. Do not copy it into logs or chat state.
+        await response.body?.cancel();
+        throw new Error(`Codex subscription bridge returned HTTP ${response.status}.`);
+      }
       const result = await response.json() as BridgeResponse;
 
       if (result.content) {
@@ -117,10 +125,29 @@ function streamCodex(model: Model<Api>, context: Context): AssistantMessageEvent
 
       output.stopReason = result.toolCalls.length ? "toolUse" : "stop";
       stream.push({ type: "done", reason: output.stopReason, message: output });
+      logger.info("Codex subscription inference completed", {
+        event: "ai.subscription.inference.finished",
+        modelId: model.id,
+        modelProvider: model.provider,
+        modelRoute: "subscription",
+        outcome: "ok",
+        durationMs: Date.now() - startedAt,
+        toolCallCount: result.toolCalls.length,
+      });
     } catch (error) {
       output.stopReason = "error";
       output.errorMessage = error instanceof Error ? error.message : String(error);
       stream.push({ type: "error", reason: "error", error: output });
+      logger.warn("Codex subscription inference failed", {
+        event: "ai.subscription.inference.finished",
+        modelId: model.id,
+        modelProvider: model.provider,
+        modelRoute: "subscription",
+        outcome: "error",
+        durationMs: Date.now() - startedAt,
+        toolCallCount: 0,
+        error,
+      });
     } finally {
       stream.end();
     }

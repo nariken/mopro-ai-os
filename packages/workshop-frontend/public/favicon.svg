@@ -1,9 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cloudflare OS">
-  <path
-    d="M32 8 52.8 20v24L32 56 11.2 44V20L32 8Z"
-    fill="none"
-    stroke="#ff4801"
-    stroke-width="7"
-    stroke-linejoin="round"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MOPRO AI OS">
+  <rect width="64" height="64" fill="#F7F4EA" rx="14"/>
+  <path fill="#252B8F" d="m8 43 17-10 10 6 8-5 6 4v8L28 58Z"/>
+  <path fill="#7B6FE8" d="m12 32 17-10 10 6 8-5 6 4v8L32 47Z"/>
+  <path fill="#D8D2FF" d="m16 21 17-10 10 6 8-5 6 4v8L36 36Z"/>
+  <rect width="20" height="14" x="38" y="5" fill="#FF4F32" rx="4" transform="rotate(30 48 12)"/>
 </svg>

@@ -33,6 +33,7 @@ import { chatChangeStatuses, foldProposedChanges, isCompactionTurn,
   type ChangeBatch } from "./agent-compaction";
 import { ambientGatekeeperMode } from "./provisioning-policy";
 import { listFeaturedBlueprintsFromKv, readBlueprintContent, readBlueprintKvRecord, sanitizeBlueprintOutput } from "./blueprint-archive";
+import { scanGadgetFilesForSecrets } from "./gadget-secret-scan";
 import { WebFetchEnv } from "./web-fetch";
 import { UserDurableObject, UserAiModelRecord, type UserChatContext, type WorkspaceOutputEntry } from "./user";
 import { AgentSpawnerBinding } from "./agent-spawner-binding";
@@ -6844,9 +6845,17 @@ class OverseerImpl implements AgentHooks {
   // *or* an empty tree (an accepted creation with no files yet -- a legitimate head, just not a
   // publishable one): either way the archive would be empty, which instantiation refuses.
   async assertPublishableCommit(commitId: string | undefined): Promise<string> {
-    if (commitId !== undefined &&
-        (await this.gitStore.readCommitFiles(commitId)).size > 0) {
-      return commitId;
+    if (commitId !== undefined) {
+      let files = await this.gitStore.readCommitFiles(commitId);
+      if (files.size > 0) {
+        let findings = scanGadgetFilesForSecrets(files);
+        if (findings.length > 0) {
+          let locations = findings.map(({path, line, kind}) => `${path}:${line} (${kind})`).join(", ");
+          throw new Error("This gadget may contain secrets and cannot be packaged. Remove the " +
+              `credential-like values and try again: ${locations}`);
+        }
+        return commitId;
+      }
     }
     throw new Error("This gadget has no code to publish. Accept some code first.");
   }

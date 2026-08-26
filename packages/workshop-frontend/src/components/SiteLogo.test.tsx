@@ -51,9 +51,11 @@ describe('SiteLogo', () => {
     expect(container!.querySelector('[data-fallback]')).toBeNull()
   })
 
-  it('uses the supplied fallback when no logo is configured or loading fails', () => {
+  it('uses the MOPRO mark when no logo is configured or a configured logo fails', () => {
     render()
-    expect(container!.querySelector('[data-fallback]')).not.toBeNull()
+    let image = container!.querySelector('img')!
+    expect(image.getAttribute('src')).toMatch(/^data:image\/svg\+xml/)
+    expect(container!.querySelector('[data-fallback]')).toBeNull()
 
     act(() => root!.unmount())
     container!.remove()
@@ -61,8 +63,9 @@ describe('SiteLogo', () => {
     container = undefined
     render('/api/site-logo?v=revision')
     act(() => container!.querySelector('img')!.dispatchEvent(new Event('error')))
-    expect(container!.querySelector('img')).toBeNull()
-    expect(container!.querySelector('[data-fallback]')).not.toBeNull()
+    image = container!.querySelector('img')!
+    expect(image.getAttribute('src')).toMatch(/^data:image\/svg\+xml/)
+    expect(container!.querySelector('[data-fallback]')).toBeNull()
 
     rerender('/api/site-logo?v=revision')
     expect(container!.querySelector('img')).not.toBeNull()
@@ -79,8 +82,8 @@ describe('SiteLogo', () => {
       </ServerConfigContext.Provider>,
     ))
 
-    expect(container!.querySelector('img')).toBeNull()
-    expect(container!.querySelector('[data-fallback]')).not.toBeNull()
+    expect(container!.querySelector('img')!.getAttribute('src')).toMatch(/^data:image\/svg\+xml/)
+    expect(container!.querySelector('[data-fallback]')).toBeNull()
   })
 
 })
