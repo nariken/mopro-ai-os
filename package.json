@@ -15,6 +15,11 @@
     "dev-client": "cd packages/workshop-frontend && pnpm run dev",
     "dev-server": "node scripts/run-dev-server.ts",
     "codex-bridge": "node scripts/codex-subscription-bridge.ts",
+    "litellm-local": "litellm --config scripts/litellm-local.yaml --host 127.0.0.1 --port 4000",
+    "chatwork-mcp": "node --env-file-if-exists=.dev.vars node_modules/mcp-proxy/dist/bin/mcp-proxy.mjs --host 127.0.0.1 --port 8790 --server stream --streamEndpoint /mcp --no-modern --no-eventStore -- node scripts/chatwork-mcp-annotated.mjs",
+    "mattermost-mcp": "node --env-file-if-exists=.dev.vars scripts/mattermost-mcp-bridge.ts",
+    "multica-mcp": "MULTICA_SERVER_URL=http://127.0.0.1:8080 node node_modules/mcp-proxy/dist/bin/mcp-proxy.mjs --host 127.0.0.1 --port 8792 --server stream --streamEndpoint /mcp --no-modern --no-eventStore -- node scripts/multica-mcp-annotated.mjs",
+    "local-video-mcp": "node --env-file-if-exists=.dev.vars scripts/local-video-mcp.ts",
     "personal:backup": "node scripts/personal-state-backup.ts create",
     "personal:backup:verify": "node scripts/personal-state-backup.ts verify",
     "personal:restore": "node scripts/personal-state-backup.ts restore",
@@ -27,9 +32,11 @@
     "types:generate": "node scripts/generate-worker-types.ts"
   },
   "devDependencies": {
+    "@chatwork/mcp-server": "0.0.4",
     "@types/node": "26.1.0",
     "aws4fetch": "^1.0.20",
     "jsonc-parser": "^3.3.1",
+    "mcp-proxy": "6.7.10",
     "typescript": "catalog:",
     "typescript6": "npm:typescript@6.0.3",
     "vite": "catalog:",

@@ -48,4 +48,7 @@ allowBuilds:
   esbuild: true
   protobufjs: true
   sharp: true
+  # Its postinstall only updates public-suffix rules when an opt-in env var is set; the package
+  # already ships the generated rules used by mcp-proxy, so no install-time network/code is needed.
+  tldjs: false
   workerd: true

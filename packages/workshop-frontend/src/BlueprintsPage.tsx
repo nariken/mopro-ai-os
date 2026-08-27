@@ -1,9 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { useKumoToastManager } from "@cloudflare/kumo";
 import {
+  ArrowRight,
   Blueprint as BlueprintIcon,
   BookOpen,
+  Lightning,
   MagnifyingGlass,
+  Plug,
+  ShieldCheck,
 } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { BlueprintPublicInfo } from "@gadgets/workshop-shared/api";
@@ -12,8 +16,26 @@ import { useAuthenticatedApi } from "./AuthContext";
 import { BindingBadge, uniqueBindingBadges } from "./components/BlueprintCard";
 import { BlueprintPreviewPlaceholder } from "./components/BlueprintPreviewImage";
 import ViewToggle from "./components/ViewToggle";
+import {
+  AGENT_CATALOG,
+  AGENT_ROLES,
+  AgentCatalogItem,
+  AgentRole,
+} from "./agentCatalog";
 
 type VendorMap = Map<string, VendorDescription>;
+
+const ROLE_LABELS: Record<AgentRole | "All", string> = {
+  All: "すべて",
+  Executive: "経営",
+  Sales: "営業",
+  Marketing: "マーケティング",
+  "Customer Support": "カスタマーサポート",
+  Commerce: "EC・販売",
+  "Project Management": "プロジェクト管理",
+  "Engineering & IT": "開発・IT",
+  "People & Operations": "人事・業務運用",
+};
 
 export default function BlueprintsPage() {
   const { authenticatedApi } = useAuthenticatedApi();
@@ -30,6 +52,7 @@ export default function BlueprintsPage() {
     return localStorage.getItem("explore-view") === "list" ? "list" : "grid";
   });
   const [search, setSearch] = useState("");
+  const [role, setRole] = useState<AgentRole | "All">("All");
 
   useEffect(() => {
     localStorage.setItem("explore-view", view);
@@ -67,22 +90,27 @@ export default function BlueprintsPage() {
   }, [authenticatedApi]);
 
   const q = search.trim().toLowerCase();
-  const filtered = featuredBlueprints.filter((b) => {
+  const filteredBlueprints = featuredBlueprints.filter((b) => {
     if (!q) return true;
     return (
       b.metadata.title.toLowerCase().includes(q) ||
       (b.metadata.description ?? "").toLowerCase().includes(q)
     );
   });
+  const filteredAgents = AGENT_CATALOG.filter((item) => {
+    if (role !== "All" && item.role !== role) return false;
+    if (!q) return true;
+    return [item.title, item.role, item.outcome, item.description, ...item.connections]
+      .some((value) => value.toLowerCase().includes(q));
+  });
 
   return (
     <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-3 sm:px-10">
       <header className="flex items-end justify-between gap-4 px-3 pb-4 pt-6 sm:pt-10">
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight text-kumo-default">Explore</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-kumo-default">AIエージェントカタログ</h1>
           <p className="mt-1 text-[13px] leading-[18px] tracking-[-0.25px] text-kumo-subtle">
-            Discover featured blueprints to use as starting points. Open one to create a workspace
-            from it, or save it to reuse later.
+            今ある業務システムはそのまま。AIエージェントが横断して働き、根拠と人の管理を保ちながら仕事を完了します。
           </p>
         </div>
         <ViewToggle view={view} onChange={setView} />
@@ -91,7 +119,7 @@ export default function BlueprintsPage() {
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 px-3 pb-3">
         <span className="text-[12px] font-medium uppercase tracking-[0.08em] text-kumo-inactive">
-          Featured
+          {filteredAgents.length} 商品
         </span>
         <div className="relative min-w-0 flex-1 sm:w-64 sm:flex-none">
           <MagnifyingGlass
@@ -102,16 +130,51 @@ export default function BlueprintsPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search blueprints…"
+            placeholder="仕事・成果・接続先を検索…"
             className="h-10 w-full rounded-lg border border-kumo-line bg-kumo-base pl-9 pr-4 text-[16px] text-kumo-default placeholder:text-kumo-inactive transition-[border-color,box-shadow] duration-150 ease-out focus:border-kumo-ring focus:outline-none focus:ring-[3px] focus:ring-kumo-ring/15 sm:h-9 sm:text-[13px]"
           />
         </div>
       </div>
 
       <div className="chat-panel min-h-0 flex-1 overflow-y-auto pb-8 pt-1">
+        <div className="mb-4 flex gap-2 overflow-x-auto px-3 pb-1">
+          {(["All", ...AGENT_ROLES] as const).map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setRole(item)}
+              className={`shrink-0 rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors ${
+                role === item
+                  ? "border-kumo-brand bg-kumo-brand text-white"
+                  : "border-kumo-line bg-kumo-base text-kumo-subtle hover:border-kumo-fill hover:text-kumo-default"
+              }`}
+            >
+              {ROLE_LABELS[item]}
+            </button>
+          ))}
+        </div>
+
+        {filteredAgents.length === 0 ? (
+          <EmptySection title="該当する商品がありません" message="職種または検索条件を変更してください。" />
+        ) : (
+          <div className="grid grid-cols-1 gap-4 px-3 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredAgents.map((item) => <AgentCatalogCard key={item.id} item={item} />)}
+          </div>
+        )}
+
+        <div className="mx-3 my-8 border-t border-kumo-line" />
+        <div className="mb-3 flex items-end justify-between gap-4 px-3">
+          <div>
+            <h2 className="text-base font-semibold text-kumo-default">公開済みBlueprint</h2>
+            <p className="mt-0.5 text-[12px] text-kumo-subtle">
+              この環境ですぐに再利用できる、公開済みの実装です。
+            </p>
+          </div>
+        </div>
+
         {loading ? (
           <LoadingSkeleton view={view} />
-        ) : filtered.length === 0 ? (
+        ) : filteredBlueprints.length === 0 ? (
           <EmptySection
             title={
               search
@@ -126,7 +189,7 @@ export default function BlueprintsPage() {
           />
         ) : view === "grid" ? (
           <div className="grid grid-cols-1 gap-4 px-3 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((blueprint) => (
+            {filteredBlueprints.map((blueprint) => (
               <FeaturedBlueprintCard
                 key={blueprint.id}
                 blueprint={blueprint}
@@ -136,7 +199,7 @@ export default function BlueprintsPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-0.5">
-            {filtered.map((blueprint) => (
+            {filteredBlueprints.map((blueprint) => (
               <FeaturedBlueprintRow
                 key={blueprint.id}
                 blueprint={blueprint}
@@ -147,6 +210,47 @@ export default function BlueprintsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function AgentCatalogCard({ item }: { item: AgentCatalogItem }) {
+  return (
+    <article className="flex min-h-[270px] flex-col rounded-xl border border-kumo-line bg-kumo-base p-4 transition-[border-color,box-shadow] duration-150 hover:border-kumo-fill hover:shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-kumo-fill text-kumo-brand">
+          <Lightning size={17} weight="fill" />
+        </div>
+        <span className="rounded-full bg-kumo-tint px-2 py-1 text-[10px] font-medium uppercase tracking-[0.06em] text-kumo-subtle">
+          {ROLE_LABELS[item.role]}
+        </span>
+      </div>
+
+      <h3 className="mt-3 text-[15px] font-semibold tracking-[-0.25px] text-kumo-default">
+        {item.title}
+      </h3>
+      <p className="mt-1 text-[13px] leading-[18px] text-kumo-default">{item.outcome}</p>
+      <p className="mt-2 line-clamp-2 text-[12px] leading-4 text-kumo-subtle">
+        {item.description}
+      </p>
+
+      <div className="mt-3 flex items-start gap-1.5 text-[11px] leading-4 text-kumo-subtle">
+        <Plug size={13} className="mt-0.5 shrink-0" />
+        <span className="line-clamp-2">{item.connections.join(" · ")}</span>
+      </div>
+      <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-kumo-subtle">
+        <ShieldCheck size={13} className="shrink-0" />
+        <span>{item.stage === "ready" ? "対応済みの接続先で利用可能" : "追加コネクターが必要"}</span>
+      </div>
+
+      <Link
+        to="/"
+        search={{ prompt: item.prompt, title: item.title }}
+        className="group mt-auto flex items-center justify-between border-t border-kumo-line pt-3 text-[12px] font-medium text-kumo-brand"
+      >
+        このエージェントを構築
+        <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+      </Link>
+    </article>
   );
 }
 

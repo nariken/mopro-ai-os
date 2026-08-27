@@ -361,6 +361,9 @@ export interface AuthenticatedApi extends RpcTarget {
   /** Get profile info for the user who is logged in. */
   whoami(): Promise<AiChatAuthorInfo>;
 
+  /** Get the deployment-level product role for the logged-in account. */
+  getAccountRole(): Promise<AccountRole>;
+
   /** Set the user's own display name, seen in chats, etc. */
   setOwnDisplayName(name: string): Promise<void>;
 
@@ -714,6 +717,9 @@ export interface AuthenticatedApi extends RpcTarget {
   // TODO:
   // - Edit permissions on a connected account.
 }
+
+/** Deployment-level product access granted to an authenticated account. */
+export type AccountRole = "builder" | "operator";
 
 /** Describes a gatekeeper's management app, for the Workshop nav + page. */
 export type GatekeeperAppInfo = {

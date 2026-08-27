@@ -53,6 +53,25 @@ Personal MVP was closed on 2026-08-26. Nnet planning starts from the separate
 [Personal and Nnet AI routing decision](../architecture/nnet-ai-routing.md);
 AWS deployment work is not part of this completed Personal milestone.
 
+## Post-MVP Personal iteration — 2026-08-28
+
+The completed MVP has since been extended as a local AI OS operating environment. These additions
+do not reopen the MOP-564 MVP milestone:
+
+- Builder and Operator roles now separate authoring/configuration from use-only shared Gadget
+  operation. New local accounts remain builders unless explicitly listed in `OPERATORS`.
+- Explore now contains 25 Japanese agent products across eight job families. Catalog launches carry
+  the product name into the new workspace instead of leaving it as `Untitled Workspace`.
+- Local connections cover Chatwork (`8790`), Mattermost (`8791`), Multica Desktop (`8792`), and a
+  zero-API-cost local video renderer (`8793`), in addition to configured native Gatekeepers.
+- Context & Skills was verified with Markdown, JSON, and a valid `SKILL.md` example collection.
+- The trend-video operator now renders a real 1080x1920 H.264/AAC MP4 using local FFmpeg,
+  ImageMagick, and macOS speech synthesis. Rendering is approval-gated and never publishes.
+- A kintone Gatekeeper provides app-scoped, audited reads and approval-gated writes.
+
+Operational setup and known boundaries are maintained in
+[MOPRO Personal local operations](../personal-local-operations.md).
+
 ## Follow-up closure — package re-import regression
 
 - Added a dedicated `.gadget` archive round-trip test.
