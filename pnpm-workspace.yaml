@@ -18,7 +18,7 @@ catalog:
   vite: 7.3.6
   vite-plus: ^0.2.8
   vitest: ^4.1.10
-  wrangler: ^4.119.0
+  wrangler: ^4.126.0
 
 overrides:
   # Vitest peers can resolve vite@latest, so the version is pinned rather than ranged. Points at the
