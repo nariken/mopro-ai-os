@@ -12,6 +12,10 @@ import { GoogleSheetsApi } from "./sheets-api";
 import type {
   GoogleSpreadsheetSession, SpreadsheetInfo, SpreadsheetRange, SpreadsheetValueMode,
 } from "./sheets-types";
+import { SearchConsoleApi } from "./search-console-api";
+import type {
+  SearchConsoleProperty, SearchConsoleSession, SearchConsoleSitemap, SearchConsoleUrlInspection,
+} from "./search-console-types";
 import { docToMarkdown, markdownToDocRequests, computeReplaceOperations, DocSnapshot } from "./markdown-converter";
 import { BigQueryApi, DEFAULT_MAX_BYTES_BILLED } from "./bigquery-api";
 import {
@@ -32,18 +36,21 @@ import DOCS_TYPES_CODE from "./docs-types.txt";
 import BIGQUERY_TYPES_CODE from "./bigquery-types.txt";
 import CALENDAR_TYPES_CODE from "./calendar-types.txt";
 import SHEETS_TYPES_CODE from "./sheets-types.txt";
+import SEARCH_CONSOLE_TYPES_CODE from "./search-console-types.txt";
 import {
   BigQueryConfiguratorUI,
   CalendarConfiguratorUI,
   GmailConfiguratorUI,
   GoogleDocConfiguratorUI,
   GoogleSheetsConfiguratorUI,
+  SearchConsoleConfiguratorUI,
 } from "./google-configurators";
 import BIGQUERY_CONFIGURATOR_HTML from "./generated/bigquery-configurator-ui.txt";
 import CALENDAR_CONFIGURATOR_HTML from "./generated/calendar-configurator-ui.txt";
 import GMAIL_CONFIGURATOR_HTML from "./generated/gmail-configurator-ui.txt";
 import GOOGLE_DOC_CONFIGURATOR_HTML from "./generated/google-doc-configurator-ui.txt";
 import GOOGLE_SHEETS_CONFIGURATOR_HTML from "./generated/google-sheets-configurator-ui.txt";
+import SEARCH_CONSOLE_CONFIGURATOR_HTML from "./generated/search-console-configurator-ui.txt";
 import GOOGLE_LOGO_SVG from "./google-logo.svg";
 import { obsContext } from "./observability.js";
 import { AccessTokenCache, AccessTokenRequest, ACCESS_TOKEN_EXPIRY_SAFETY_MS } from "./auth-retry";
@@ -54,7 +61,8 @@ import {
 import {
   AUTH_SCOPES, BIGQUERY_HOST, BIGQUERY_RESOURCE, GMAIL_RESOURCE, GOOGLE_CALENDAR_RESOURCE,
   GOOGLE_DOC_RESOURCE, GOOGLE_SHEETS_RESOURCE, LEGACY_GRANTED_RESOURCE_URL_PATTERNS,
-  RESOURCE_BY_KIND, SUPPORTED_RESOURCES, grantedResourcesFromScopes, parseResourceUrl,
+  RESOURCE_BY_KIND, SEARCH_CONSOLE_RESOURCE, SUPPORTED_RESOURCES, grantedResourcesFromScopes,
+  parseResourceUrl,
   resourceUrlPatternsToOAuthScopes,
 } from "./resources";
 import { ObserverCheck, ObserverTracker } from "./observers";
@@ -399,6 +407,7 @@ export class GatekeeperVendor extends WorkerEntrypoint<Env> implements Gatekeepe
   async getTypeScriptTypes(): Promise<string> {
     return [
       TYPES_CODE, DOCS_TYPES_CODE, SHEETS_TYPES_CODE, CALENDAR_TYPES_CODE, BIGQUERY_TYPES_CODE,
+      SEARCH_CONSOLE_TYPES_CODE,
     ].join("\n");
   }
 }
@@ -809,6 +818,10 @@ export class GatekeeperUserImpl extends WorkerEntrypoint<Env, GatekeeperUserImpl
         };
         return {class: this.ctx.exports.BigQueryGatekeeperImpl({props}), resource};
       }
+      case "searchConsole": {
+        let props: SearchConsoleGatekeeperImplProps = {userObjectId, siteUrl: target.siteUrl};
+        return {class: this.ctx.exports.SearchConsoleGatekeeperImpl({props}), resource};
+      }
     }
   }
 
@@ -852,6 +865,13 @@ export class GatekeeperUserImpl extends WorkerEntrypoint<Env, GatekeeperUserImpl
       return {
         iframeHtml: GOOGLE_SHEETS_CONFIGURATOR_HTML,
         ui: new RpcStub(new GoogleSheetsConfiguratorUI(getToken)),
+      };
+    }
+
+    if (resourceUrlPattern === SEARCH_CONSOLE_RESOURCE.urlPattern) {
+      return {
+        iframeHtml: SEARCH_CONSOLE_CONFIGURATOR_HTML,
+        ui: new RpcStub(new SearchConsoleConfiguratorUI(getToken)),
       };
     }
 
@@ -950,6 +970,7 @@ export interface GoogleVerifierApi extends GatekeeperUserVerifier {
   hasCalendarWriterAccess(calendarId: string): Promise<boolean>;
   hasCalendarFreeBusyAccess(calendarId: string): Promise<boolean>;
   hasDatasetAccess(projectId: string, datasetId: string): Promise<boolean>;
+  hasSearchConsolePropertyAccess(siteUrl: string): Promise<boolean>;
 }
 
 @validateRpc()
@@ -977,6 +998,17 @@ export class GoogleVerifier extends WorkerEntrypoint<Env, GoogleVerifierProps>
     try {
       await api.getSpreadsheet(spreadsheetId);
       return true;
+    } catch (error) {
+      if (isNoAccessStatus(httpStatusFromError(error))) return false;
+      throw error;
+    }
+  }
+
+  async hasSearchConsolePropertyAccess(siteUrl: string): Promise<boolean> {
+    let api = new SearchConsoleApi(opts => this.#getToken(opts));
+    try {
+      let property = await api.getProperty(siteUrl);
+      return property.permissionLevel !== "siteUnverifiedUser";
     } catch (error) {
       if (isNoAccessStatus(httpStatusFromError(error))) return false;
       throw error;
@@ -2973,6 +3005,127 @@ class GoogleCalendarSessionImpl extends RpcTarget implements GoogleCalendarSessi
       this.#pendingActions.remove(actionId);
       throw error;
     }
+  }
+}
+
+// =======================================================================================
+// Search Console Gatekeeper
+// =======================================================================================
+
+type SearchConsoleGatekeeperImplProps = {
+  userObjectId: string;
+  siteUrl: string;
+};
+
+@validateRpc()
+export class SearchConsoleGatekeeperImpl
+    extends DurableObject<Env, SearchConsoleGatekeeperImplProps>
+    implements Gatekeeper<SearchConsoleSession> {
+  #tokens = new AccessTokenCache(opts => {
+    let account = this.ctx.exports.UserAccount.get(
+      this.ctx.exports.UserAccount.idFromString(this.ctx.props.userObjectId),
+    );
+    return account.getAccessToken(opts);
+  });
+
+  #api(): SearchConsoleApi {
+    return new SearchConsoleApi(opts => this.#tokens.get(opts));
+  }
+
+  async describe(): Promise<ResourceDescription> {
+    let property = await this.#api().getProperty(this.ctx.props.siteUrl);
+    return {
+      url: `https://searchconsole.googleapis.com/property/${encodeURIComponent(property.siteUrl)}/`,
+      title: property.siteUrl,
+      snippet: `Google Search Console property (${property.permissionLevel}, read-only)`,
+      suggestedBindingName: "SEARCH_CONSOLE",
+      tsType: "SearchConsoleSession",
+    };
+  }
+
+  async getTypeScriptTypes(): Promise<string> {
+    return SEARCH_CONSOLE_TYPES_CODE;
+  }
+
+  async getAutoApprovableActions(): Promise<ActionKind[]> {
+    return [];
+  }
+
+  async startSession(approvalQueue: RpcStub<ApprovalQueue>): Promise<SearchConsoleSession> {
+    return new SearchConsoleSessionImpl(
+      this.#api(), this.ctx.props.siteUrl, approvalQueue.dup(),
+    );
+  }
+
+  async applyAction(_action: number): Promise<void> {
+    throw new Error("Search Console is read-only and implements no actions.");
+  }
+  async rejectAction(_action: number): Promise<void> {
+    throw new Error("Search Console is read-only and implements no actions.");
+  }
+  revertAction(_action: number): Promise<void> {
+    throw new Error("Search Console is read-only and implements no actions.");
+  }
+
+  /** Observer strategy B: the property is one ACL unit, checked with the observer's token. */
+  async addObserver(_id: string, user: Fetcher<GatekeeperUserVerifier>): Promise<void> {
+    let verifier = user as unknown as Fetcher<GoogleVerifierApi>;
+    if (!(await verifier.hasSearchConsolePropertyAccess(this.ctx.props.siteUrl))) {
+      throw new Error(
+        "This collaborator cannot access the bound Search Console property, so they cannot " +
+        "observe data this workspace read from it.",
+      );
+    }
+  }
+
+  async removeObserver(_id: string): Promise<void> {}
+}
+
+@validateRpc()
+class SearchConsoleSessionImpl extends RpcTarget implements SearchConsoleSession {
+  constructor(
+    private api: SearchConsoleApi,
+    private siteUrl: string,
+    private approvalQueue: RpcStub<ApprovalQueue>,
+  ) {
+    super();
+  }
+
+  [Symbol.dispose](): void {
+    this.approvalQueue[Symbol.dispose]();
+  }
+
+  async getProperty(): Promise<SearchConsoleProperty> {
+    let property = await this.api.getProperty(this.siteUrl);
+    await this.approvalQueue.authorizeObservation({
+      title: "Read Search Console property",
+      description: `Read permission metadata for ${property.siteUrl}.`,
+    });
+    return property;
+  }
+
+  async listSitemaps(options?: {sitemapIndex?: string}): Promise<SearchConsoleSitemap[]> {
+    let sitemaps = await this.api.listSitemaps(this.siteUrl, options?.sitemapIndex);
+    await this.approvalQueue.authorizeObservation({
+      title: "Read Search Console sitemaps",
+      description: `Read processing information for ${sitemaps.length} sitemap(s).`,
+    });
+    return sitemaps;
+  }
+
+  async inspectUrl(
+    url: string, options?: {languageCode?: string},
+  ): Promise<SearchConsoleUrlInspection> {
+    let inspected = new URL(url);
+    if (inspected.protocol !== "https:" && inspected.protocol !== "http:") {
+      throw new Error("Search Console can inspect only HTTP or HTTPS URLs.");
+    }
+    let result = await this.api.inspectUrl(this.siteUrl, inspected.toString(), options?.languageCode);
+    await this.approvalQueue.authorizeObservation({
+      title: "Inspect URL in Search Console",
+      description: `Read Google index status for ${inspected.origin}${inspected.pathname}.`,
+    });
+    return result;
   }
 }
 

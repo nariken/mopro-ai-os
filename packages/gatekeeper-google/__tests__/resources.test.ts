@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   BIGQUERY_RESOURCE, GMAIL_RESOURCE, GOOGLE_CALENDAR_RESOURCE, GOOGLE_DOC_RESOURCE,
   GOOGLE_SHEETS_RESOURCE, IDENTITY_SCOPES, LEGACY_GRANTED_RESOURCE_URL_PATTERNS, RESOURCE_BY_KIND,
-  RESOURCE_SCOPES, SUPPORTED_RESOURCES, grantedResourcesFromScopes, parseResourceUrl,
+  RESOURCE_SCOPES, SEARCH_CONSOLE_RESOURCE, SUPPORTED_RESOURCES, grantedResourcesFromScopes,
+  parseResourceUrl,
   resourceUrlPatternsToOAuthScopes, validateResourceUrlPatterns,
 } from "../src/resources";
 
@@ -26,6 +27,7 @@ describe("resource declarations", () => {
       "https://docs.google.com/spreadsheets/d/:spreadsheetId/*",
       "https://calendar.google.com/calendar/:calendarId/*",
       "https://bigquery.googleapis.com/:projectId/*",
+      "https://searchconsole.googleapis.com/property/:siteUrl/*",
     ]);
   });
 
@@ -68,6 +70,13 @@ describe("resourceUrlPatternsToOAuthScopes", () => {
     expect(resourceUrlPatternsToOAuthScopes([BIGQUERY_RESOURCE.urlPattern])).toEqual([
       ...IDENTITY_SCOPES,
       "https://www.googleapis.com/auth/bigquery",
+    ]);
+  });
+
+  it("uses the read-only Search Console scope", () => {
+    expect(resourceUrlPatternsToOAuthScopes([SEARCH_CONSOLE_RESOURCE.urlPattern])).toEqual([
+      ...IDENTITY_SCOPES,
+      "https://www.googleapis.com/auth/webmasters.readonly",
     ]);
   });
 
@@ -234,6 +243,26 @@ describe("parseResourceUrl", () => {
     it("rejects an unrecognised view", () => {
       expect(() => parseResourceUrl("https://mail.google.com/#sent"))
         .toThrow(/Unsupported Gmail view/);
+    });
+  });
+
+  describe("search console", () => {
+    it("parses Domain and URL-prefix properties", () => {
+      expect(parseResourceUrl(
+        "https://searchconsole.googleapis.com/property/sc-domain%3Anariken.ai/",
+      )).toEqual({kind: "searchConsole", siteUrl: "sc-domain:nariken.ai"});
+      expect(parseResourceUrl(
+        "https://searchconsole.googleapis.com/property/https%3A%2F%2Fnariken.ai%2F/",
+      )).toEqual({kind: "searchConsole", siteUrl: "https://nariken.ai/"});
+    });
+
+    it("rejects malformed properties and unrelated paths", () => {
+      expect(() => parseResourceUrl(
+        "https://searchconsole.googleapis.com/property/not-a-property/",
+      )).toThrow(/Domain or URL-prefix/);
+      expect(() => parseResourceUrl(
+        "https://searchconsole.googleapis.com/sites",
+      )).toThrow(/Unsupported Search Console/);
     });
   });
 

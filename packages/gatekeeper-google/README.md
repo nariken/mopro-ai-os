@@ -8,7 +8,7 @@ This package provides Google OAuth integration for Gadgets. It serves two purpos
   which becomes the user's identity.
   The sign-in grant is transient (discarded right after the email is read).
 - **Connections:** when a user connects Google (or signs in and later connects it), the scopes for
-  the selected resources (Gmail, Docs, Sheets, Calendar, or BigQuery — see below) are requested so
+  the selected resources (Gmail, Docs, Sheets, Calendar, BigQuery, or Search Console — see below) are requested so
   gadgets can access those APIs on the user's behalf.
 
 A single Google OAuth client is used for both. Set it up as follows.
@@ -29,7 +29,7 @@ If you're running this project locally and want to use Google API integrations, 
 
 ### Step 2: Enable Required APIs
 
-You'll need to enable the Google APIs that you want to use. Currently supported: Gmail, Google Docs, Google Sheets, Google Calendar, and BigQuery.
+You'll need to enable the Google APIs that you want to use. Currently supported: Gmail, Google Docs, Google Sheets, Google Calendar, BigQuery, and Search Console.
 
 1. In the left sidebar, go to **APIs & Services** > **Library** (or [click here](https://console.cloud.google.com/apis/library))
 2. Search for "Gmail API"
@@ -50,6 +50,9 @@ You'll need to enable the Google APIs that you want to use. Currently supported:
 17. Go back to the Library, search for "BigQuery API"
 18. Click on **BigQuery API** in the results
 19. Click **Enable**
+20. Go back to the Library, search for "Google Search Console API"
+21. Click on **Google Search Console API** in the results
+22. Click **Enable**
 
 The Google Drive API is used only to search and display document and spreadsheet metadata in the resource pickers. Document reads and edits still go through the Google Docs API, and spreadsheet reads go through the Google Sheets API.
 
@@ -80,6 +83,7 @@ included). Across all resource types, the gatekeeper can request:
 - `calendar.calendarlist.readonly` so the resource picker can list calendars.
 - `calendar.events` to manage selected calendar and check calendar availability.
 - `bigquery` for BigQuery dry-runs and queries. This is intentionally broader than `bigquery.readonly` because dry-runs use `jobs.insert`; the gatekeeper enforces read-only SQL and resource scope checks before running queries.
+- `webmasters.readonly` to list accessible Search Console properties, read submitted sitemap status, and inspect the indexed state of URLs within a selected property. The Search Console connection intentionally exposes no sitemap submission, removal, or indexing-request methods.
 
 ### Step 4: Test Users
 
@@ -135,12 +139,12 @@ User — see Step 4.)
 2. Create or open a gadget.
 3. Navigate to the **Connections** tab.
 4. Click **+ New Connection**.
-5. Choose a Google resource type: Gmail, Google Doc, Google Spreadsheet, Google Calendar, or BigQuery.
+5. Choose a Google resource type: Gmail, Google Doc, Google Spreadsheet, Google Calendar, BigQuery, or Search Console.
 6. If prompted, connect a Google account.
 7. You should be redirected to Google's consent screen in a new tab.
 8. The consent screen acts extra-scary since this is an "unverified" test app.
 9. After granting access, the tab closes, and you're back to Gadgets.
-10. Use the picker to choose the mailbox scope, document, project, dataset, or table to connect.
+10. Use the picker to choose the mailbox scope, document, project, dataset, table, or Search Console property to connect.
 11. Create the connection. Ask the agent what it can do, or ask it to write a gadget using the new binding.
 
 You can also see your connected accounts and add and remove them in the settings (accessed through the account menu in the upper-right).

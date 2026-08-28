@@ -9,7 +9,8 @@
 
 import { describe, expect, it } from "vitest";
 import gmailConfigurator from "../src/configurator/gmail-configurator-ui";
-import { GMAIL_RESOURCE, parseResourceUrl } from "../src/resources";
+import searchConsoleConfigurator from "../src/configurator/search-console-configurator-ui";
+import { GMAIL_RESOURCE, SEARCH_CONSOLE_RESOURCE, parseResourceUrl } from "../src/resources";
 
 // The configurators never call `ui` from these two methods; it is present only to satisfy the
 // context type, and touching it is a bug.
@@ -79,4 +80,21 @@ describe("Gmail configurator URLs", () => {
     expect(gmailValues(inbox)).toEqual({ mode: "all" });
     expect(parseResourceUrl(inbox)).toEqual({ kind: "gmail" });
   });
+});
+
+describe("Search Console configurator URLs", () => {
+  const resourceUrl = (siteUrl: string) => searchConsoleConfigurator.resourceUrl!({
+    values: {siteUrl}, ui: noUi,
+  }) as string;
+
+  it.each(["sc-domain:nariken.ai", "https://nariken.ai/"])(
+    "round-trips %s through the resource URL",
+    siteUrl => {
+      let url = resourceUrl(siteUrl);
+      expect(parseResourceUrl(url)).toEqual({kind: "searchConsole", siteUrl});
+      expect(searchConsoleConfigurator.initialValuesFromResourceUrl!({
+        resourceUrl: url, resourceUrlPattern: SEARCH_CONSOLE_RESOURCE.urlPattern, ui: noUi,
+      })).toEqual({siteUrl});
+    },
+  );
 });
