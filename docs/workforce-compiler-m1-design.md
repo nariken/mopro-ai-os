@@ -1,7 +1,7 @@
 # Workforce Compiler M1 solution design
 
-Status: Stage 2 implementation contract for MOP-579  
-Baseline: `mopro/personal-mvp` at `7cbb85cb1b55fdd56e20415e6e38f822b1df9a8b`  
+Status: Stage 2 implementation contract for MOP-579
+Baseline: `mopro/personal-mvp` at `356b256360dbeee6563435961774ddcf9fcdb22b`
 Target occupation: Advertising Strategy Operator (`marketing-ad-strategy`)
 
 This document turns the Human-accepted MOP-578 requirements into an implementable M1 contract.
