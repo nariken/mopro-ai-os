@@ -6,7 +6,7 @@ personal operations MVP in MOPRO AI OS.
 
 ## Canonical references
 
-- Notion: [Pilot Success Agent Job 01 | 30-day Pilot Control Tower v0.3](https://app.notion.com/p/3cb50ed0e509813b9017fb7f74cc4611)
+- Notion: [Pilot Success Agent Job 01 | 30-day Pilot Control Tower v1.0](https://app.notion.com/p/3cb50ed0e509813b9017fb7f74cc4611)
 - Local workspace: `7ac897d5d2e9f5960d703ef1c38d4d85e1a3d418fcb7e0f6857bec89022a7f22`
 - Gadget: `Pilot Success Control Tower`
 
@@ -23,6 +23,7 @@ The Control Tower persists one synthetic pilot and presents:
 - issues and risks;
 - a maximum of three evidence-linked Daily Pilot Brief actions;
 - revisioned Weekly Pilot Review drafts for a selected continuous seven-day period;
+- revisioned Day 30 Outcome Packages with evidence-linked recommendations;
 - internal synthetic approval decisions; and
 - an activity log for every accepted state change.
 
@@ -43,6 +44,14 @@ blockers, rework, Human Touch, agent/API cost, evidence references, next-week
 improvements, and scope-change candidates. Missing measurements are shown as
 `not measured`; they are never estimated. Regenerating the same period creates
 a new revision while preserving the earlier draft.
+
+The Day 30 Outcome Package summarizes the pilot period, Before/After state,
+metric targets and actuals, outcomes, constraints, incidents, Human operating
+time, agent/API cost, reusable settings and runbooks, and an internal
+continue/revise/stop recommendation. It also produces a continuation-proposal
+draft. Every result is linked to Synthetic Evidence, every generation is
+recorded in the Activity Log, and prior revisions are preserved. The package
+cannot make or execute a commercial decision.
 
 ## Safety boundary
 
@@ -82,6 +91,27 @@ through 2026-08-29. Revisions 1 and 2 were both preserved and reported:
 
 The implementation self-check returned `passed: true`.
 
+Day 30 validation used 30 Synthetic Daily Evidence records. Revisions 1 through
+3 were generated and preserved. The latest package reported:
+
+- 60 processed items, 57 on time, and 3 rework events;
+- 360 Human operating minutes and 1.95 Synthetic cost units;
+- completion 90%, on-time processing 95%, rework 5%, and evidence coverage 100%;
+- two evidence-linked synthetic incidents with no external action;
+- an internal `revise` recommendation, not an executed continuation decision;
+  and
+- evidence references from `E-D01` through `E-D30`.
+
+Revision 3 removed a decision-basis inconsistency by deriving metric judgments
+and recommendation evidence from the same comparison results. On-time
+processing at 95% now consistently satisfies the target of 95% or higher. The
+internal `revise` recommendation remains based on the absence of real-pilot
+evidence, not on a synthetic metric failure.
+
+The Day 30 self-check returned `passed: true`. Weekly Review revisions 1 and 2,
+all ten work items, `W-01` in progress, and `A-01` waiting for approval remained
+unchanged.
+
 ## Daily operation
 
 1. Open the `Pilot Success Agent | 30-day Pilot` workspace from Favorites.
@@ -97,6 +127,11 @@ Review, verify every result against its evidence references, and record the
 next-week improvements. Regenerate only when a corrected internal draft is
 needed; the new revision does not replace its predecessors.
 
+At the end of the synthetic pilot, generate the Day 30 Outcome Package, verify
+the metric calculations and every Evidence reference, then review the internal
+recommendation and continuation-proposal draft. A new generation creates a new
+revision and does not replace the prior package.
+
 Do not enter real customer data or use the UI to imply that a proposal,
 contract, invoice, or customer communication has occurred.
 
@@ -104,7 +139,7 @@ contract, invoice, or customer communication has occurred.
 
 - define and approve the exact customer scope and success metrics;
 - add a pre-connection safety gate and customer data classification;
-- implement the Day 30 Outcome Package;
 - add revision-safe approval for customer-facing drafts;
-- measure human operating time and agent/API cost; and
+- validate Human operating time and agent/API cost measurement with real-pilot
+  data after the safety gate; and
 - export a sanitized Blueprint that contains no customer data or credentials.
