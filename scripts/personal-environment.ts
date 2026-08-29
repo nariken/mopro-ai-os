@@ -3,6 +3,7 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { connect } from "node:net";
 import { pnpmCommand } from "./pnpm-command.ts";
+import { checkClaudeSubscription } from "./claude-subscription-health.ts";
 import { PERSONAL_SERVICES, personalService, type PersonalService } from "./personal-ports.ts";
 
 const command = process.argv[2] ?? "doctor";
@@ -75,6 +76,9 @@ async function doctor(): Promise<boolean> {
     if (required && !result.ok) allOk = false;
     console.log(`${result.ok ? "OK" : "FAIL"}\t${service.port}\t${service.id}\t${result.detail}`);
   }
+  let claude = await checkClaudeSubscription();
+  if (!claude.ok) allOk = false;
+  console.log(`${claude.ok ? "OK" : "FAIL"}\tprovider\tclaude-subscription\t${claude.detail}`);
   return allOk;
 }
 
