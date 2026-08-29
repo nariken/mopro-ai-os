@@ -6,7 +6,7 @@ personal operations MVP in MOPRO AI OS.
 
 ## Canonical references
 
-- Notion: [Pilot Success Agent Job 01 | 30-day Pilot Control Tower v0.2](https://app.notion.com/p/3cb50ed0e509813b9017fb7f74cc4611)
+- Notion: [Pilot Success Agent Job 01 | 30-day Pilot Control Tower v0.3](https://app.notion.com/p/3cb50ed0e509813b9017fb7f74cc4611)
 - Local workspace: `7ac897d5d2e9f5960d703ef1c38d4d85e1a3d418fcb7e0f6857bec89022a7f22`
 - Gadget: `Pilot Success Control Tower`
 
@@ -22,6 +22,7 @@ The Control Tower persists one synthetic pilot and presents:
 - ten work items, including overdue and approval-waiting states;
 - issues and risks;
 - a maximum of three evidence-linked Daily Pilot Brief actions;
+- revisioned Weekly Pilot Review drafts for a selected continuous seven-day period;
 - internal synthetic approval decisions; and
 - an activity log for every accepted state change.
 
@@ -34,6 +35,14 @@ revision from the waiting state.
 Every accepted change records the actor, timestamp, prior value, new value,
 and reason. Success metrics, overdue counts, approval counts, and the Daily
 Pilot Brief are recalculated from persisted state after a change.
+
+The Weekly Pilot Review aggregates Activity Log, Synthetic Operation Log,
+work items, issues and risks, and approvals. It reports the start and end
+state, processed count, completion rate, overdue items, approval decisions,
+blockers, rework, Human Touch, agent/API cost, evidence references, next-week
+improvements, and scope-change candidates. Missing measurements are shown as
+`not measured`; they are never estimated. Regenerating the same period creates
+a new revision while preserving the earlier draft.
 
 ## Safety boundary
 
@@ -61,6 +70,16 @@ Validation completed on 2026-08-29 (Asia/Tokyo):
 - both actions produced complete activity-log records; and
 - the synthetic dataset was reset to its baseline after validation.
 
+Weekly Review validation used seven synthetic Operation Logs for 2026-08-23
+through 2026-08-29. Revisions 1 and 2 were both preserved and reported:
+
+- 7 processed items and a 14% completion rate;
+- evidence references for the reported results;
+- Human Touch, agent/API cost, approval decisions, and rework as `not measured`;
+  and
+- no mutation of the operational baseline: 10 work items, `W-01` in progress,
+  and `A-01` waiting for approval.
+
 The implementation self-check returned `passed: true`.
 
 ## Daily operation
@@ -73,6 +92,11 @@ The implementation self-check returned `passed: true`.
 6. Review internal synthetic approvals and approve or return with a reason.
 7. Use the Activity Log as the audit trail for the day's operation.
 
+Once a week, select a continuous seven-day period, generate the Weekly Pilot
+Review, verify every result against its evidence references, and record the
+next-week improvements. Regenerate only when a corrected internal draft is
+needed; the new revision does not replace its predecessors.
+
 Do not enter real customer data or use the UI to imply that a proposal,
 contract, invoice, or customer communication has occurred.
 
@@ -80,7 +104,6 @@ contract, invoice, or customer communication has occurred.
 
 - define and approve the exact customer scope and success metrics;
 - add a pre-connection safety gate and customer data classification;
-- implement Weekly Pilot Review;
 - implement the Day 30 Outcome Package;
 - add revision-safe approval for customer-facing drafts;
 - measure human operating time and agent/API cost; and
