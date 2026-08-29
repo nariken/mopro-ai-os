@@ -23,7 +23,7 @@ Publishing, profile changes, review replies, external distribution, and paid spe
 
 ## Advertising Strategy Operator
 
-Status: Catalog contract defined; Personal Gadget implementation is in progress.
+Status: Demo-capable and accepted in the Personal workspace on 2026-08-29.
 
 The Advertising Strategy Operator selects a paid-acquisition platform for the business type,
 target occupation, offer, geography, economics, buying cycle, and available creative. It distinguishes
@@ -49,6 +49,12 @@ site and is not treated as a customer-acquisition media-buying platform.
 Forecasts are ranges, not guarantees. Account connection, audience upload, creative publication,
 campaign launch, spend, budget changes, and pausing live campaigns require Human Approval. Each
 approved action must include a diff, expected result, downside, rollback, and idempotency key.
+
+The Synthetic MVP was verified with a B2B SaaS example. It scored five media platforms, selected
+LinkedIn Ads and Google Ads as the primary candidates, generated pessimistic/base/optimistic
+forecasts through payback, created platform-specific creative and campaign drafts, and registered
+a non-executing approval card. All eight views rendered successfully; no advertising account,
+external API, audience upload, campaign launch, or paid action was used.
 
 ## Platform safety additions
 
