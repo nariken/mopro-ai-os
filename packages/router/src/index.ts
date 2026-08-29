@@ -14,6 +14,8 @@ type EmailEntrypoint = CloudflareWorkersModule.WorkerEntrypoint &
 
 export interface Env {
   WORKSHOP_BACKEND: Fetcher;
+  /** Optional private MCP bridge exposed only when the deployment binds one. */
+  MOPRO_MCP?: Fetcher;
   /** Present in production (wrangler.jsonc assets stanza); absent in dev. */
   ASSETS?: Fetcher;
   /** Dormant until custom domains + Email Routing exist; the handler ships anyway. */
@@ -24,6 +26,10 @@ export interface Env {
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+
+    if (env.MOPRO_MCP && (url.pathname === "/mcp" || url.pathname === "/mcp/")) {
+      return env.MOPRO_MCP.fetch(req);
+    }
 
     for (const key of Object.keys(env)) {
       if (!key.startsWith("GATEKEEPER_")) continue;

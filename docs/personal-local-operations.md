@@ -19,6 +19,10 @@ pnpm codex-bridge
 pnpm dev-server -- --serve-frontend-assets
 ```
 
+`pnpm codex-bridge` runs a local health supervisor. It checks the ChatGPT-subscription bridge
+every five seconds and restarts it if it exits or becomes unhealthy. It never falls back to an
+API-key model.
+
 Open `http://localhost:8787`. The Codex bridge listens only on `127.0.0.1:8788`.
 
 Optional local MCP services are started separately:

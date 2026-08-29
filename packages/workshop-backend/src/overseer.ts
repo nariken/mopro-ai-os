@@ -63,6 +63,7 @@ import {
   type GadgetExportEntrypoint,
   readCustomExportFormats,
 } from "./gadget-export";
+import { validateGadgetJavaScript } from "./gadget-syntax-validation";
 
 const logger = createWorkshopLogger("workshop.overseer");
 export const AGENT_RUNNING_ERROR_MESSAGE = "Agent is running, wait for it to finish.";
@@ -3584,6 +3585,14 @@ class OverseerImpl implements AgentHooks {
         return {outcome: "stale"};
       }
       toCommit.push({record, files, baseHead: record.commitId});
+    }
+
+    // Acceptance is the durable boundary: validate every proposed JavaScript file immediately
+    // before writing commits. Preview startup catches server errors opportunistically and the
+    // browser may report client errors, but neither is a reliable gate (a preview need not have
+    // been opened). Parsing here guarantees malformed code never reaches mainline.
+    for (const {record, files} of toCommit) {
+      validateGadgetJavaScript(record.bindingName, files);
     }
 
     // Write the commits (content-addressed object writes; harmless if the accept below turns out

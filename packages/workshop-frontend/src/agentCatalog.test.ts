@@ -3,7 +3,7 @@ import { AGENT_CATALOG, AGENT_ROLES } from "./agentCatalog";
 
 describe("agent catalog", () => {
   it("contains a focused catalog with at least three agents for every role", () => {
-    expect(AGENT_CATALOG).toHaveLength(25);
+    expect(AGENT_CATALOG).toHaveLength(27);
     for (const role of AGENT_ROLES) {
       expect(AGENT_CATALOG.filter((item) => item.role === role).length).toBeGreaterThanOrEqual(3);
     }
