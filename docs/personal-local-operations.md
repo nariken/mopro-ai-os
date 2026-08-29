@@ -1,6 +1,6 @@
 # MOPRO Personal local operations
 
-Date: 2026-08-28 (JST)
+Date: 2026-08-30 (JST)
 
 ## Purpose
 
@@ -15,32 +15,36 @@ Run the services from the repository root. Local state under `.wrangler/` and co
 configuration are preserved across restarts.
 
 ```sh
-pnpm codex-bridge
-pnpm dev-server -- --serve-frontend-assets
+pnpm mopro:doctor
+pnpm mopro:start
 ```
 
 `pnpm codex-bridge` runs a local health supervisor. It checks the ChatGPT-subscription bridge
 every five seconds and restarts it if it exits or becomes unhealthy. It never falls back to an
 API-key model.
 
-Open `http://localhost:8787`. The Codex bridge listens only on `127.0.0.1:8788`.
+Open `http://localhost:3000`. The Router remains on `127.0.0.1:8787`, and the Codex bridge listens
+only on `127.0.0.1:8788`. The canonical ownership and lifecycle of all local ports is maintained in
+`docs/personal-port-registry.md`.
 
-Optional local MCP services are started separately:
+Start the core environment together with the standard local MCP services when they are needed:
 
 ```sh
-pnpm chatwork-mcp
-pnpm mattermost-mcp
-pnpm multica-mcp
-pnpm local-video-mcp
+pnpm mopro:start -- --with-local-mcp
 ```
 
 | Port | Service | Notes |
 | --- | --- | --- |
+| 3000 | MOPRO frontend | Canonical Personal UI; strict port |
+| 3002 | Multica frontend | Docker companion UI |
+| 8080 | Multica backend / Desktop daemon | Desktop profile `desktop-127.0.0.1-8080` |
+| 8787 | MOPRO Router | Workshop backend, Gatekeepers and local ChatGPT MCP Worker |
 | 8788 | Codex subscription bridge | Local authoring only; no paid API fallback |
 | 8790 | Chatwork MCP | Reads plus approval-gated actions |
 | 8791 | Mattermost MCP | OAuth connection to the configured Mattermost deployment |
 | 8792 | Multica MCP | Uses the Multica Desktop daemon at `127.0.0.1:8080` |
 | 8793 | Local video MCP | FFmpeg, ImageMagick, and macOS `say`; zero API cost |
+| 8794 | ChatGPT MCP tunnel boundary | Optional; start explicitly only when required |
 
 Do not start a second Homebrew Multica daemon while Multica Desktop is running.
 
