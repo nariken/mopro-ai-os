@@ -78,6 +78,12 @@ collection `MOPRO AI OS デモガイド` contains:
 - `product-facts.json` — structured product facts;
 - `skills/product-brief/SKILL.md` — a runnable product-brief Skill example.
 
+The distributable shared baseline lives in `context-collections/mopro-core-skills/`. Import it as a
+Context collection to give agents evidence-first research, approval-safe execution, backward
+planning, and observable quality gates. Keep specialist Skills in agent-specific collections so
+the shared catalog remains small and avoids unrelated activations. See `docs/mopro-core-skills.md`
+for adoption and review rules.
+
 ## Local video rendering
 
 Start `pnpm local-video-mcp`, then connect `http://127.0.0.1:8793/mcp` as an MCP Server. For an
