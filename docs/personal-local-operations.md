@@ -23,6 +23,17 @@ pnpm mopro:start
 every five seconds and restarts it if it exits or becomes unhealthy. It never falls back to an
 API-key model.
 
+`pnpm mopro:doctor` also fails closed on the Claude design route. It rejects API-key or alternate
+provider environment variables, verifies that the macOS login Keychain is readable, requires a
+`claude.ai` Pro/Max/Team/Enterprise session, and performs a one-turn tool-free live smoke. An auth
+status alone is insufficient because an expired OAuth session can still appear logged in until the
+first inference refresh. If Keychain inspection fails, repair or unlock Keychain before logging in
+again; do not repeat OAuth or fall back to a paid API route.
+
+Before Multica assigns work to `claude-opus`, apply the same gate. On failure, keep the Issue
+unassigned or blocked with `provider_auth_or_access`, preserve downstream stages in backlog, and
+use another confirmed subscription-backed Agent only when doing so cannot duplicate an active run.
+
 Open `http://localhost:3000`. The Router remains on `127.0.0.1:8787`, and the Codex bridge listens
 only on `127.0.0.1:8788`. The canonical ownership and lifecycle of all local ports is maintained in
 `docs/personal-port-registry.md`.
