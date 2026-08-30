@@ -83,6 +83,37 @@ describe("Workforce Compiler M1 validator", () => {
     expectCode(badEnum, "SCHEMA_INVALID");
   });
 
+  it("fails closed without throwing for malformed nested user data", () => {
+    const malformedInputs: unknown[] = [
+      {
+        businesses: [null],
+        processes: [],
+        tasks: [],
+        skills: [],
+      },
+      {
+        businesses: [],
+        processes: [{ id: "proc-partial" }],
+        tasks: [],
+        skills: [],
+      },
+      {
+        businesses: [],
+        processes: [],
+        tasks: [{ approval: null }],
+        skills: [],
+      },
+    ];
+
+    for (const input of malformedInputs) {
+      expect(() => validateWorkforceDefinition(input)).not.toThrow();
+      const result = validateWorkforceDefinition(input);
+      expect(result.valid).toBe(false);
+      expect(result.indexes).toBeNull();
+      expect(result.issues.some((issue) => issue.code === "SCHEMA_INVALID")).toBe(true);
+    }
+  });
+
   it("rejects missing and wrong-kind references", () => {
     const missing = clone(loadFixture());
     missing.tasks[0]!.requiredSkills[0]!.skillId = "skill-does-not-exist";
@@ -118,10 +149,18 @@ describe("Workforce Compiler M1 validator", () => {
     expectCode(cyclic, "PROCESS_DEPENDENCY_CYCLE");
   });
 
-  it("rejects negative quantities and missing unit/currency", () => {
-    const negative = clone(loadFixture());
-    negative.tasks[0]!.currentTime.value = -1;
-    expectCode(negative, "SCHEMA_INVALID");
+  it("rejects negative time, cost, and volume plus missing unit/currency/period", () => {
+    const negativeTime = clone(loadFixture());
+    negativeTime.tasks[0]!.currentTime.value = -1;
+    expectCode(negativeTime, "SCHEMA_INVALID");
+
+    const negativeCost = clone(loadFixture());
+    negativeCost.tasks[0]!.currentCost.amount = -1;
+    expectCode(negativeCost, "SCHEMA_INVALID");
+
+    const negativeVolume = clone(loadFixture());
+    negativeVolume.tasks[0]!.volume.value = -1;
+    expectCode(negativeVolume, "SCHEMA_INVALID");
 
     const missingUnit = clone(loadFixture());
     missingUnit.tasks[0]!.volume.unit = "";
@@ -130,6 +169,12 @@ describe("Workforce Compiler M1 validator", () => {
     const missingCurrency = clone(loadFixture());
     missingCurrency.tasks[0]!.currentCost.currency = "yen" as never;
     expectCode(missingCurrency, "SCHEMA_INVALID");
+
+    const missingPeriod = clone(loadFixture()) as unknown as {
+      tasks: Array<{ frequency: Record<string, unknown> }>;
+    };
+    delete missingPeriod.tasks[0]!.frequency.period;
+    expectCode(missingPeriod, "SCHEMA_INVALID");
   });
 
   it("rejects out-of-range skill levels and unused-skill profiles", () => {

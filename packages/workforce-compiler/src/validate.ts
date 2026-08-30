@@ -695,7 +695,15 @@ export function validateWorkforceDefinition(input: unknown): ValidationResult {
 
   const def = asDefinition(input);
   if (def) {
-    issues.push(...validateSemantics(def));
+    try {
+      issues.push(...validateSemantics(def));
+    } catch (error) {
+      // Schema-invalid user data can have the four aggregate arrays while their
+      // nested values are not safe to traverse semantically. Ajv has already
+      // recorded those failures, so fail closed instead of leaking a TypeError
+      // from the public validator. Non-data/programmer failures still surface.
+      if (!(error instanceof TypeError) || schemaOk) throw error;
+    }
   }
 
   issues.sort(compareIssues);
