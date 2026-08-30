@@ -56,7 +56,7 @@ export function generateArtifacts(
   let confirmedExecutionType: ExecutionCandidate | null = null;
   let approval: M2ApprovalGate | null = null;
 
-  if (selection) {
+  if (selection?.approval.state === "approved") {
     confirmedExecutionType = selection.selectedExecutionType;
     const candidateResult = candidates.find(
       (c) => c.candidate === selection.selectedExecutionType,

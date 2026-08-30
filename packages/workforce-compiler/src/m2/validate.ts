@@ -221,6 +221,7 @@ function validateTaskAnalyses(
     checkCostRanges(ta, analysis, base, issues, failClosedCodes);
 
     if (ta.optionEstimates.length !== 4) {
+      failClosedCodes.push("ANALYSIS_SCHEMA_INVALID");
       issues.push(
         issue("ANALYSIS_SCHEMA_INVALID", `${base}/optionEstimates`, "Must have exactly 4 option estimates"),
       );
@@ -230,6 +231,7 @@ function validateTaskAnalyses(
       const oe = ta.optionEstimates[j]!;
       const expectedCandidate = CANDIDATE_ORDER[j];
       if (oe.candidate !== expectedCandidate) {
+        failClosedCodes.push("ANALYSIS_SCHEMA_INVALID");
         issues.push(
           issue(
             "ANALYSIS_SCHEMA_INVALID",
@@ -383,12 +385,13 @@ function validateHumanSelections(
       );
     }
 
-    if (sel.approval.state === "rejected" as any) {
+    if (sel.approval.state !== "approved") {
+      failClosedCodes.push("RISK_APPROVAL_INCONSISTENT");
       issues.push(
         issue(
           "RISK_APPROVAL_INCONSISTENT",
           `${base}/approval/state`,
-          "Rejected approval cannot confirm execution type",
+          "Only an approved placement_commit card can confirm execution type",
         ),
       );
     }

@@ -756,6 +756,50 @@ describe("M2 Workforce Compiler — deterministic core", () => {
         expect(task.approval.actionType).toBe("placement_commit");
       }
     });
+
+    for (const state of ["draft", "pending", "rejected"] as const) {
+      it(`fails closed and does not confirm a ${state} selection`, () => {
+        const def = loadM1();
+        const selection = makeHumanSelection("task-platform-fit-assessment", "ai");
+        selection.approval.state = state;
+        const analysis = makeAnalysis({
+          analysisId: `wpa-approval-${state}`,
+          humanSelections: [selection],
+        });
+
+        const result = compilePlacement({
+          definition: def,
+          analysis,
+          definitionDigest: M1_DIGEST,
+        });
+        const task = result.tasks[0]!;
+
+        expect(result.valid).toBe(false);
+        expect(task.decision).toBe("undecided");
+        expect(task.decisionReasonCodes).toContain("RISK_APPROVAL_INCONSISTENT");
+        expect(task.confirmedExecutionType).toBeNull();
+        expect(task.approval).toBeNull();
+        expect(task.artifacts).toEqual([]);
+      });
+    }
+
+    it("fails closed when the four-candidate schema contract is broken", () => {
+      const def = loadM1();
+      const analysis = makeAnalysis({ analysisId: "wpa-invalid-candidate-shape" });
+      analysis.taskAnalyses[0]!.optionEstimates.pop();
+
+      const result = compilePlacement({
+        definition: def,
+        analysis,
+        definitionDigest: M1_DIGEST,
+      });
+      const task = result.tasks[0]!;
+
+      expect(result.valid).toBe(false);
+      expect(task.decision).toBe("undecided");
+      expect(task.decisionReasonCodes).toContain("ANALYSIS_SCHEMA_INVALID");
+      expect(task.artifacts).toEqual([]);
+    });
   });
 
   // Case 13: zero external effects
