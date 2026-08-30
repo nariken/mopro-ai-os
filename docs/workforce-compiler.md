@@ -4,8 +4,8 @@ User-facing vocabulary and local rerun guide for the Advertising Strategy Operat
 (`marketing-ad-strategy`) M1 package.
 
 Architecture contract: `docs/workforce-compiler-m1-design.md`.
-Next milestone contract: `docs/workforce-compiler-m2-design.md` (placement decision,
-not yet implemented).
+M2 contract: `docs/workforce-compiler-m2-design.md` (placement decision).
+M2 implementation: `packages/workforce-compiler/src/m2/` (Stage 8).
 
 ## Vocabulary
 
@@ -38,13 +38,47 @@ Out of scope:
 ## Layout
 
 ```text
-packages/workforce-compiler/          # schema, types, validator, tests
-docs/fixtures/workforce-compiler/     # synthetic fixture
+packages/workforce-compiler/
+  src/index.ts                        # M1 public surface
+  src/types.ts                        # M1 types
+  src/validate.ts                     # M1 validator
+  src/m2/                             # M2 deterministic core (Stage 8)
+    compile.ts                        # compilePlacement entry point
+    types.ts                          # M2 domain types
+    rules.ts                          # weights, bands, reason codes
+    canonical.ts                      # JCS canonicalization, digest
+    gate.ts                           # feasibility gate
+    score.ts                          # integer scoring
+    sensitivity.ts                    # perturbation analysis
+    decide.ts                         # decision logic
+    artifacts.ts                      # draft artifact generators
+    validate.ts                       # analysis validation
+    index.ts                          # M2 public surface
+  __tests__/validate.test.ts          # M1 tests (unchanged)
+  __tests__/m2/compile.test.ts        # M2 tests
+docs/fixtures/workforce-compiler/
+  advertising-strategy-operator.synthetic.json   # M1 fixture
+  m2/*.json                           # M2 fixtures (F1–F17)
 docs/workforce-compiler.md            # this guide
 docs/workforce-compiler-m1-design.md  # Stage 2 architecture contract
-docs/workforce-compiler-m2-design.md  # Stage 7 M2 contract (design only)
+docs/workforce-compiler-m2-design.md  # Stage 7 M2 contract
 docs/architecture/workforce-compiler-m2-adr.md  # M2 decision records
 ```
+
+## M2 — Placement decision
+
+Import path: `@gadgets/workforce-compiler/m2`
+
+Key exports: `compilePlacement`, `computeDefinitionDigest`, `RULE_SET_VERSION`,
+`CANDIDATE_ORDER`, `jcsCanonical`, `validatePlacementAnalysis`.
+
+M2 is a sidecar document (`WorkforcePlacementAnalysis`) bound to an M1 definition
+by `definitionId`, `schemaVersion`, and content digest. It evaluates four candidates
+(`ai`, `existing_staff`, `hire`, `outsource`) per task, producing `recommended`,
+`human_choice`, or `undecided`. All scoring is integer-only with version-pinned rules.
+
+M2 is local, synthetic, read-only, and deterministic — no network calls, no
+credentials, no wall clock. The M1 schema, types, and exports are unchanged.
 
 ## Validate the fixture
 

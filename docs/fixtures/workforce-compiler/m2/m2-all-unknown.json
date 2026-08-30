@@ -1,0 +1,1290 @@
+{
+  "schemaVersion": "2.0.0",
+  "analysisId": "wpa-f10-all-unknown",
+  "analysisVersion": "1.0.0",
+  "ruleSetVersion": "wc-m2-rules/1.0.0",
+  "generatedAt": "2026-08-30T00:00:00Z",
+  "evaluationHorizonYears": 1,
+  "definitionRef": {
+    "definitionId": "wd-marketing-ad-strategy-synthetic-m1",
+    "schemaVersion": "1.0.0",
+    "contentDigest": "sha256-046858bf3ef170a95ce1ead0e453a96ca9b6f7844178937678a42cac437691c1"
+  },
+  "provenance": {
+    "kind": "synthetic",
+    "generatedAt": "2026-08-30T00:00:00Z",
+    "sources": [
+      {
+        "id": "ev-prov",
+        "status": "assumed",
+        "sourceType": "synthetic",
+        "sourceRef": null,
+        "claim": "Synthetic M2 fixture",
+        "observedAt": null,
+        "note": null
+      }
+    ]
+  },
+  "scopeTaskIds": [
+    "task-platform-fit-assessment"
+  ],
+  "taskAnalyses": [
+    {
+      "taskId": "task-platform-fit-assessment",
+      "workCharacteristics": {
+        "repeatability": {
+          "score": 4,
+          "rubricId": "rubric.repeatability/1.0.0",
+          "rationale": "Synthetic",
+          "evidence": {
+            "id": "ev-r-609xeo",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "digitality": {
+          "score": 5,
+          "rubricId": "rubric.digitality/1.0.0",
+          "rationale": "Synthetic",
+          "evidence": {
+            "id": "ev-r-vhcq8l",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "exceptionRate": {
+          "score": 1,
+          "rubricId": "rubric.exceptionRate/1.0.0",
+          "rationale": "Synthetic",
+          "evidence": {
+            "id": "ev-r-004vl8",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "judgmentEmpathy": {
+          "score": 1,
+          "rubricId": "rubric.judgmentEmpathy/1.0.0",
+          "rationale": "Synthetic",
+          "evidence": {
+            "id": "ev-r-6eg3fu",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "specifiability": {
+          "score": 4,
+          "rubricId": "rubric.specifiability/1.0.0",
+          "rationale": "Synthetic",
+          "evidence": {
+            "id": "ev-r-bb1qai",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "procedureSteps": [
+          "Gather inputs",
+          "Analyze",
+          "Write memo"
+        ],
+        "knownExceptions": []
+      },
+      "operatingConstraints": {
+        "deadline": null,
+        "requiredAvailability": "business_hours",
+        "dataSensitivity": "internal",
+        "requiredAuthority": "draft",
+        "mustInternal": false,
+        "forbiddenExecutionTypes": [],
+        "legalConstraints": [],
+        "contractConstraints": [],
+        "securityConstraints": [],
+        "evidence": [
+          {
+            "id": "ev-oc",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        ]
+      },
+      "demand": {
+        "frequency": {
+          "value": 2,
+          "unit": "assessments",
+          "period": "week",
+          "evidence": {
+            "id": "ev-t1447o",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "volume": {
+          "value": 1,
+          "unit": "platforms",
+          "period": "event",
+          "evidence": {
+            "id": "ev-ske43g",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "variabilityPct": {
+          "value": 10,
+          "unit": "percent",
+          "period": null,
+          "evidence": {
+            "id": "ev-7dkctm",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "peakVolume": {
+          "value": 3,
+          "unit": "platforms",
+          "period": "week",
+          "evidence": {
+            "id": "ev-gysipv",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "slaTurnaround": {
+          "value": 120,
+          "unit": "minute",
+          "period": "event",
+          "evidence": {
+            "id": "ev-mhma0a",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        }
+      },
+      "currentState": {
+        "ownerRoleId": "role-ad-strategy-operator",
+        "capacity": {
+          "value": 2400,
+          "unit": "minute",
+          "period": "month",
+          "evidence": {
+            "id": "ev-vrl80t",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "skillProfile": [
+          {
+            "skillId": "skill-unit-economics-analysis",
+            "attainedLevel": 3,
+            "evidence": {
+              "id": "ev-s-u176jy",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          {
+            "skillId": "skill-experiment-design",
+            "attainedLevel": 2,
+            "evidence": {
+              "id": "ev-s-ja1a1f",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          }
+        ],
+        "timeSpent": {
+          "value": 180,
+          "unit": "minute",
+          "period": "week",
+          "evidence": {
+            "id": "ev-om9ev3",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "costPerPeriod": {
+          "amount": 500000,
+          "currency": "JPY",
+          "period": "month",
+          "evidence": {
+            "id": "ev-m-m20f6b",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "qualityRecord": {
+          "score": 3,
+          "rubricId": "rubric.qualityRecord/1.0.0",
+          "rationale": "Synthetic",
+          "evidence": {
+            "id": "ev-r-y5p18c",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        },
+        "evidence": [
+          {
+            "id": "ev-cs",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": null,
+            "claim": "Synthetic M2 fixture",
+            "observedAt": null,
+            "note": null
+          }
+        ]
+      },
+      "optionEstimates": [
+        {
+          "candidate": "ai",
+          "setupTime": {
+            "value": null,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-1wtjxw",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "setupCost": {
+            "low": {
+              "amount": 100000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-x8d7pn",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "base": {
+              "amount": 200000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-e1dvvl",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "high": {
+              "amount": 300000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-4189ef",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          },
+          "runTime": {
+            "value": 30,
+            "unit": "minute",
+            "period": "event",
+            "evidence": {
+              "id": "ev-fohwcr",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "runCost": {
+            "low": {
+              "amount": 1200000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-says73",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "base": {
+              "amount": 1800000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-l2tvn5",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "high": {
+              "amount": 2400000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-xu4wx3",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          },
+          "availableCapacity": {
+            "value": 480000,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-t7qkw0",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "toolAvailability": "available",
+          "contextAvailability": "available",
+          "authorityGrantable": true,
+          "attainableSkills": [
+            {
+              "skillId": "skill-unit-economics-analysis",
+              "attainedLevel": 3,
+              "evidence": {
+                "id": "ev-s-m02niv",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            {
+              "skillId": "skill-experiment-design",
+              "attainedLevel": 2,
+              "evidence": {
+                "id": "ev-s-fs18c7",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          ],
+          "learningTime": {
+            "value": 120,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-q2craa",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "expectedQuality": {
+            "score": 4,
+            "rubricId": "rubric.expectedQuality/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-mrh1bu",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "reversibility": {
+            "score": 5,
+            "rubricId": "rubric.reversibility/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-3nb1c3",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "learningValue": {
+            "score": 3,
+            "rubricId": "rubric.learningValue/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-caf431",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "confidence": {
+            "score": 3,
+            "rubricId": "rubric.confidence/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-v8eavj",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "evidence": [
+            {
+              "id": "ev-oe-ai",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          ]
+        },
+        {
+          "candidate": "existing_staff",
+          "setupTime": {
+            "value": null,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-6ev61f",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "setupCost": {
+            "low": {
+              "amount": 0,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-0drkjn",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "base": {
+              "amount": 0,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-5hn7ho",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "high": {
+              "amount": 0,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-30arxx",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          },
+          "runTime": {
+            "value": 90,
+            "unit": "minute",
+            "period": "event",
+            "evidence": {
+              "id": "ev-rcp056",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "runCost": {
+            "low": {
+              "amount": 4800000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-bk8nqg",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "base": {
+              "amount": 6000000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-4700ty",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "high": {
+              "amount": 7200000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-66xtjz",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          },
+          "availableCapacity": {
+            "value": 28800,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-s5wbfr",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "toolAvailability": "available",
+          "contextAvailability": "available",
+          "authorityGrantable": true,
+          "attainableSkills": [
+            {
+              "skillId": "skill-unit-economics-analysis",
+              "attainedLevel": 3,
+              "evidence": {
+                "id": "ev-s-gfwfb7",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            {
+              "skillId": "skill-experiment-design",
+              "attainedLevel": 2,
+              "evidence": {
+                "id": "ev-s-g644us",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          ],
+          "learningTime": {
+            "value": 60,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-7ieopb",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "expectedQuality": {
+            "score": 3,
+            "rubricId": "rubric.expectedQuality/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-vzncbq",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "reversibility": {
+            "score": 4,
+            "rubricId": "rubric.reversibility/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-6vw9qj",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "learningValue": {
+            "score": 4,
+            "rubricId": "rubric.learningValue/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-0wxsih",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "confidence": {
+            "score": 4,
+            "rubricId": "rubric.confidence/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-l35jsz",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "evidence": [
+            {
+              "id": "ev-oe-es",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          ]
+        },
+        {
+          "candidate": "hire",
+          "setupTime": {
+            "value": null,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-jknwre",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "setupCost": {
+            "low": {
+              "amount": 500000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-7jooyt",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "base": {
+              "amount": 800000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-m1e9p1",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "high": {
+              "amount": 1200000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-ih6uyl",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          },
+          "runTime": {
+            "value": 90,
+            "unit": "minute",
+            "period": "event",
+            "evidence": {
+              "id": "ev-nvedcm",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "runCost": {
+            "low": {
+              "amount": 4800000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-7q34b4",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "base": {
+              "amount": 6000000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-oclrlh",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "high": {
+              "amount": 7200000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-efixww",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          },
+          "availableCapacity": {
+            "value": 28800,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-j0joqy",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "toolAvailability": "available",
+          "contextAvailability": "available",
+          "authorityGrantable": true,
+          "attainableSkills": [
+            {
+              "skillId": "skill-unit-economics-analysis",
+              "attainedLevel": 4,
+              "evidence": {
+                "id": "ev-s-0duumr",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            {
+              "skillId": "skill-experiment-design",
+              "attainedLevel": 3,
+              "evidence": {
+                "id": "ev-s-9ocxra",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          ],
+          "learningTime": {
+            "value": 2880,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-zik695",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "expectedQuality": {
+            "score": 4,
+            "rubricId": "rubric.expectedQuality/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-whop1c",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "reversibility": {
+            "score": 2,
+            "rubricId": "rubric.reversibility/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-bj4vh0",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "learningValue": {
+            "score": 5,
+            "rubricId": "rubric.learningValue/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-4h42u5",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "confidence": {
+            "score": 3,
+            "rubricId": "rubric.confidence/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-yyy8sb",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "evidence": [
+            {
+              "id": "ev-oe-hire",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          ]
+        },
+        {
+          "candidate": "outsource",
+          "setupTime": {
+            "value": null,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-esujub",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "setupCost": {
+            "low": {
+              "amount": 200000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-g8fbh0",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "base": {
+              "amount": 400000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-t2qakj",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "high": {
+              "amount": 600000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-gz80e8",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          },
+          "runTime": {
+            "value": 90,
+            "unit": "minute",
+            "period": "event",
+            "evidence": {
+              "id": "ev-gaoqxj",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "runCost": {
+            "low": {
+              "amount": 3600000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-f5olbd",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "base": {
+              "amount": 4800000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-gtpdnv",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            "high": {
+              "amount": 6000000,
+              "currency": "JPY",
+              "period": "year",
+              "evidence": {
+                "id": "ev-m-ca9bpy",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          },
+          "availableCapacity": {
+            "value": 28800,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-dzdd8t",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "toolAvailability": "available",
+          "contextAvailability": "available",
+          "authorityGrantable": true,
+          "attainableSkills": [
+            {
+              "skillId": "skill-unit-economics-analysis",
+              "attainedLevel": 3,
+              "evidence": {
+                "id": "ev-s-rc0xdc",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            },
+            {
+              "skillId": "skill-experiment-design",
+              "attainedLevel": 3,
+              "evidence": {
+                "id": "ev-s-qgyes9",
+                "status": "assumed",
+                "sourceType": "synthetic",
+                "sourceRef": null,
+                "claim": "Synthetic M2 fixture",
+                "observedAt": null,
+                "note": null
+              }
+            }
+          ],
+          "learningTime": {
+            "value": 480,
+            "unit": "minute",
+            "period": "year",
+            "evidence": {
+              "id": "ev-b5p0lu",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "expectedQuality": {
+            "score": 3,
+            "rubricId": "rubric.expectedQuality/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-g523nf",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "reversibility": {
+            "score": 3,
+            "rubricId": "rubric.reversibility/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-xjhez7",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "learningValue": {
+            "score": 1,
+            "rubricId": "rubric.learningValue/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-i4se0s",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "confidence": {
+            "score": 3,
+            "rubricId": "rubric.confidence/1.0.0",
+            "rationale": "Synthetic",
+            "evidence": {
+              "id": "ev-r-yd3077",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          },
+          "evidence": [
+            {
+              "id": "ev-oe-outsource",
+              "status": "assumed",
+              "sourceType": "synthetic",
+              "sourceRef": null,
+              "claim": "Synthetic M2 fixture",
+              "observedAt": null,
+              "note": null
+            }
+          ]
+        }
+      ],
+      "counterEvidence": []
+    }
+  ],
+  "humanSelections": []
+}
