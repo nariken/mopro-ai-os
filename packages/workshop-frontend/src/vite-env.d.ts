@@ -1,7 +1,9 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  // Override the local backend host used by Vite dev, e.g. "localhost:9000".
+  // Override the local backend host used by Vite HTTP proxies and remote DEV pages,
+  // e.g. "localhost:9000" or a Tailnet TLS Router "host:8443". Loopback pages ignore a
+  // remote value and keep connecting to 127.0.0.1:8787 (see backendEndpoint.ts).
   readonly VITE_BACKEND_HOST?: string;
 
   // Set to "true" to enable Cloudflare Access authentication mode.
