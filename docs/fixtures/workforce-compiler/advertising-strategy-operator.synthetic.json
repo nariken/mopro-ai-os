@@ -1,0 +1,794 @@
+{
+  "schemaVersion": "1.0.0",
+  "definitionId": "wd-marketing-ad-strategy-synthetic-m1",
+  "title": "Advertising Strategy Operator — Synthetic M1 Fixture",
+  "occupationCatalogId": "marketing-ad-strategy",
+  "provenance": {
+    "kind": "synthetic",
+    "generatedAt": "2026-08-30T00:00:00Z",
+    "sources": [
+      {
+        "id": "ev-prov-design",
+        "status": "assumed",
+        "sourceType": "synthetic",
+        "sourceRef": "docs/workforce-compiler-m1-design.md",
+        "claim": "M1 synthetic paid-acquisition occupation profile for Advertising Strategy Operator",
+        "observedAt": null,
+        "note": "Example values only; not claims about a real business."
+      }
+    ]
+  },
+  "businesses": [
+    {
+      "id": "biz-paid-acquisition-saas",
+      "name": "Hypothetical B2B SaaS paid acquisition",
+      "purpose": "Acquire qualified trial signups through paid media within a controlled weekly budget.",
+      "targetCustomers": [
+        "B2B SaaS founders evaluating paid acquisition",
+        "Growth operators running search and social experiments"
+      ],
+      "valueProposition": "Turn ambiguous ad spend into a documented experiment portfolio with stop/continue gates.",
+      "outcomeMetrics": [
+        {
+          "id": "metric-biz-qualified-trials",
+          "name": "Qualified trial signups",
+          "unit": "signups",
+          "currentValue": null,
+          "targetValue": 40,
+          "deadline": "2026-09-30",
+          "measurementMethod": "Count trial accounts that complete onboarding checklist within 7 days of first ad click attribution.",
+          "successCondition": "Reach 40 qualified trials in September without exceeding the weekly budget ceiling.",
+          "stopCondition": "Stop if blended CAC exceeds 1.5x target for two consecutive weeks with no learning gain.",
+          "evidence": {
+            "id": "ev-metric-biz-qualified-trials",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": "fixture://biz-paid-acquisition-saas/outcome",
+            "claim": "Synthetic September target of 40 qualified trials",
+            "observedAt": null,
+            "note": null
+          }
+        }
+      ],
+      "processIds": [
+        "proc-strategy-experiment-design",
+        "proc-measurement-optimization"
+      ],
+      "constraints": [
+        "No real ad-account credentials or audience uploads in M1",
+        "Budget figures are synthetic planning ranges, not spend authority",
+        "External launch remains draft-only behind Human Approval"
+      ],
+      "evidence": [
+        {
+          "id": "ev-biz-scope",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://biz-paid-acquisition-saas",
+          "claim": "Single synthetic paid-acquisition business for M1",
+          "observedAt": null,
+          "note": null
+        }
+      ]
+    }
+  ],
+  "processes": [
+    {
+      "id": "proc-strategy-experiment-design",
+      "businessId": "biz-paid-acquisition-saas",
+      "name": "Strategy and experiment design",
+      "purpose": "Assess platform fit and draft forecasted campaign experiments before any spend.",
+      "trigger": "New offer, channel hypothesis, or monthly planning window opens.",
+      "exitCondition": "Platform-fit note and draft campaign card are complete for Human review.",
+      "kpis": [
+        {
+          "id": "metric-proc-design-throughput",
+          "name": "Experiment drafts completed",
+          "unit": "drafts",
+          "currentValue": null,
+          "targetValue": 4,
+          "deadline": "2026-09-15",
+          "measurementMethod": "Count accepted draft experiment cards with pessimistic/base/optimistic ranges.",
+          "successCondition": "Four documented drafts ready for measurement review.",
+          "stopCondition": "Stop drafting if channel hypotheses lack a measurable conversion event.",
+          "evidence": {
+            "id": "ev-metric-proc-design-throughput",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": "fixture://proc-strategy-experiment-design/kpi",
+            "claim": "Synthetic design throughput target",
+            "observedAt": null,
+            "note": null
+          }
+        }
+      ],
+      "taskIds": [
+        "task-platform-fit-assessment",
+        "task-forecast-campaign-draft"
+      ],
+      "dependsOnProcessIds": [],
+      "evidence": [
+        {
+          "id": "ev-proc-design",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://proc-strategy-experiment-design",
+          "claim": "Process covers platform fit and forecast draft work",
+          "observedAt": null,
+          "note": null
+        }
+      ]
+    },
+    {
+      "id": "proc-measurement-optimization",
+      "businessId": "biz-paid-acquisition-saas",
+      "name": "Measurement and optimization",
+      "purpose": "Confirm measurement readiness and recommend continue, change, or stop.",
+      "trigger": "A draft experiment is ready or a weekly measurement window closes.",
+      "exitCondition": "Measurement-readiness checklist and continue/change/stop recommendation exist.",
+      "kpis": [
+        {
+          "id": "metric-proc-decision-latency",
+          "name": "Decision latency",
+          "unit": "days",
+          "currentValue": null,
+          "targetValue": 3,
+          "deadline": "2026-09-30",
+          "measurementMethod": "Days from measurement window close to documented recommendation.",
+          "successCondition": "Median decision latency at or below 3 days.",
+          "stopCondition": "Stop automation of recommendations if attribution gaps exceed policy.",
+          "evidence": {
+            "id": "ev-metric-proc-decision-latency",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": "fixture://proc-measurement-optimization/kpi",
+            "claim": "Synthetic decision latency target",
+            "observedAt": null,
+            "note": null
+          }
+        }
+      ],
+      "taskIds": [
+        "task-measurement-readiness-review",
+        "task-continue-change-stop-recommendation"
+      ],
+      "dependsOnProcessIds": ["proc-strategy-experiment-design"],
+      "evidence": [
+        {
+          "id": "ev-proc-measurement",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://proc-measurement-optimization",
+          "claim": "Process covers measurement readiness and optimization decisions",
+          "observedAt": null,
+          "note": null
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-platform-fit-assessment",
+      "processId": "proc-strategy-experiment-design",
+      "name": "Platform fit assessment",
+      "purpose": "Decide whether a paid platform hypothesis is fit to draft an experiment.",
+      "inputs": [
+        "Offer positioning brief",
+        "Audience hypothesis notes",
+        "Historical synthetic CAC ranges"
+      ],
+      "outputs": [
+        "Platform-fit memo with go/no-go",
+        "Open measurement gaps list"
+      ],
+      "frequency": {
+        "value": 2,
+        "unit": "assessments",
+        "period": "week",
+        "evidence": {
+          "id": "ev-task-platform-fit-frequency",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-platform-fit-assessment/frequency",
+          "claim": "Assumed twice-weekly assessment cadence",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "volume": {
+        "value": 1,
+        "unit": "platforms",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-platform-fit-volume",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-platform-fit-assessment/volume",
+          "claim": "One platform assessed per event",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "requiredSkills": [
+        {
+          "skillId": "skill-unit-economics-analysis",
+          "requiredLevel": 3,
+          "rationale": "Need CAC/LTV framing to reject unfit platforms early."
+        },
+        {
+          "skillId": "skill-experiment-design",
+          "requiredLevel": 2,
+          "rationale": "Assessment must leave a measurable hypothesis if it proceeds."
+        }
+      ],
+      "risk": {
+        "level": "low",
+        "reasons": ["Read-only analysis with no external write"]
+      },
+      "authority": "draft",
+      "approval": {
+        "requiresHumanApproval": false,
+        "state": "not_required",
+        "actionType": "none",
+        "target": null,
+        "proposedDiff": null,
+        "expectedResult": null,
+        "downside": null,
+        "rollback": null,
+        "idempotencyKey": null
+      },
+      "currentOwner": "synthetic-operator",
+      "currentTime": {
+        "value": 90,
+        "unit": "minutes",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-platform-fit-time",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-platform-fit-assessment/time",
+          "claim": "Assumed 90 minutes per assessment",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "currentCost": {
+        "amount": 0,
+        "currency": "JPY",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-platform-fit-cost",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-platform-fit-assessment/cost",
+          "claim": "No media cost for assessment itself",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "kpi": [
+        {
+          "id": "metric-task-platform-fit-completeness",
+          "name": "Assessment completeness",
+          "unit": "percent",
+          "currentValue": null,
+          "targetValue": 100,
+          "deadline": null,
+          "measurementMethod": "Checklist of required sections present in the memo.",
+          "successCondition": "All required sections filled before handoff.",
+          "stopCondition": "Stop if conversion event cannot be named.",
+          "evidence": {
+            "id": "ev-metric-task-platform-fit",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": "fixture://task-platform-fit-assessment/kpi",
+            "claim": "Synthetic completeness target",
+            "observedAt": null,
+            "note": null
+          }
+        }
+      ],
+      "qualityStandard": [
+        {
+          "id": "ac-platform-fit-memo",
+          "statement": "Memo states go/no-go, audience hypothesis, and conversion event.",
+          "verificationMethod": "Peer checklist review",
+          "requiredEvidence": "Completed checklist with reviewer initials"
+        }
+      ],
+      "evidence": [
+        {
+          "id": "ev-task-platform-fit",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-platform-fit-assessment",
+          "claim": "Synthetic analysis task with no side effects",
+          "observedAt": null,
+          "note": null
+        }
+      ],
+      "executionType": "undecided"
+    },
+    {
+      "id": "task-forecast-campaign-draft",
+      "processId": "proc-strategy-experiment-design",
+      "name": "Forecast and campaign draft",
+      "purpose": "Produce a draft campaign card with pessimistic/base/optimistic ranges for Human Approval preview.",
+      "inputs": [
+        "Platform-fit memo",
+        "Weekly budget ceiling (synthetic)",
+        "Creative hypothesis notes"
+      ],
+      "outputs": [
+        "Draft campaign card",
+        "Pessimistic/base/optimistic forecast table",
+        "Human Approval preview payload"
+      ],
+      "frequency": {
+        "value": 1,
+        "unit": "drafts",
+        "period": "week",
+        "evidence": {
+          "id": "ev-task-forecast-frequency",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-forecast-campaign-draft/frequency",
+          "claim": "Assumed weekly draft cadence",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "volume": {
+        "value": 1,
+        "unit": "campaign-cards",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-forecast-volume",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-forecast-campaign-draft/volume",
+          "claim": "One draft card per event",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "requiredSkills": [
+        {
+          "skillId": "skill-experiment-design",
+          "requiredLevel": 4,
+          "rationale": "Draft must encode a falsifiable experiment, not a guaranteed outcome."
+        },
+        {
+          "skillId": "skill-unit-economics-analysis",
+          "requiredLevel": 4,
+          "rationale": "Forecast ranges must stay inside synthetic unit-economics guardrails."
+        }
+      ],
+      "risk": {
+        "level": "high",
+        "reasons": [
+          "Draft proposes a campaign launch that would spend money if approved later",
+          "Incorrect forecast can bias Human Approval"
+        ]
+      },
+      "authority": "execute_after_approval",
+      "approval": {
+        "requiresHumanApproval": true,
+        "state": "draft",
+        "actionType": "campaign_launch",
+        "target": "synthetic://campaign-draft/search-brand-trial",
+        "proposedDiff": "Create draft search campaign 'brand-trial-q3' with weekly budget ceiling JPY 150000, no audience upload, no live publish.",
+        "expectedResult": "Human sees a non-executing approval card labeled draft; no ad account is touched.",
+        "downside": "If later approved without review, spend could begin on an unfit hypothesis.",
+        "rollback": "Leave campaign unpublished; delete the draft card; revoke any future launch token.",
+        "idempotencyKey": "m1-draft-campaign-launch-brand-trial-q3"
+      },
+      "currentOwner": "synthetic-operator",
+      "currentTime": {
+        "value": 120,
+        "unit": "minutes",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-forecast-time",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-forecast-campaign-draft/time",
+          "claim": "Assumed 120 minutes per draft",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "currentCost": {
+        "amount": null,
+        "currency": "JPY",
+        "period": "week",
+        "evidence": {
+          "id": "ev-task-forecast-cost",
+          "status": "unverified",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-forecast-campaign-draft/cost",
+          "claim": "Media cost remains unverified until a future approved launch",
+          "observedAt": null,
+          "note": "Amount intentionally null; ranges live in outputs, not as guarantees."
+        }
+      },
+      "kpi": [
+        {
+          "id": "metric-task-forecast-range-coverage",
+          "name": "Forecast range coverage",
+          "unit": "scenarios",
+          "currentValue": null,
+          "targetValue": 3,
+          "deadline": null,
+          "measurementMethod": "Count documented pessimistic, base, and optimistic scenarios.",
+          "successCondition": "All three scenarios present with shared assumptions listed.",
+          "stopCondition": "Stop if a scenario is presented as a guaranteed outcome.",
+          "evidence": {
+            "id": "ev-metric-task-forecast",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": "fixture://task-forecast-campaign-draft/kpi",
+            "claim": "Synthetic three-scenario requirement",
+            "observedAt": null,
+            "note": null
+          }
+        }
+      ],
+      "qualityStandard": [
+        {
+          "id": "ac-forecast-card",
+          "statement": "Draft card includes budget ceiling, conversion event, and three forecast scenarios.",
+          "verificationMethod": "Checklist against approval preview fields",
+          "requiredEvidence": "Completed draft checklist and approval preview JSON"
+        }
+      ],
+      "evidence": [
+        {
+          "id": "ev-task-forecast",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-forecast-campaign-draft",
+          "claim": "Synthetic campaign-launch draft gated behind Human Approval",
+          "observedAt": null,
+          "note": "No account, credential, real audience, or executable action included."
+        }
+      ],
+      "executionType": "undecided"
+    },
+    {
+      "id": "task-measurement-readiness-review",
+      "processId": "proc-measurement-optimization",
+      "name": "Measurement readiness review",
+      "purpose": "Confirm attribution and conversion tracking are ready before interpreting results.",
+      "inputs": [
+        "Draft campaign card",
+        "Tracking plan checklist",
+        "Synthetic conversion event map"
+      ],
+      "outputs": [
+        "Measurement-readiness scorecard",
+        "Blocking gaps list"
+      ],
+      "frequency": {
+        "value": 1,
+        "unit": "reviews",
+        "period": "week",
+        "evidence": {
+          "id": "ev-task-measurement-frequency",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-measurement-readiness-review/frequency",
+          "claim": "Assumed weekly readiness review",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "volume": {
+        "value": 1,
+        "unit": "campaigns",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-measurement-volume",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-measurement-readiness-review/volume",
+          "claim": "One campaign reviewed per event",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "requiredSkills": [
+        {
+          "skillId": "skill-experiment-design",
+          "requiredLevel": 3,
+          "rationale": "Readiness depends on whether the experiment can be falsified."
+        }
+      ],
+      "risk": {
+        "level": "medium",
+        "reasons": ["False readiness can cause bad continue/change/stop advice"]
+      },
+      "authority": "recommend",
+      "approval": {
+        "requiresHumanApproval": false,
+        "state": "not_required",
+        "actionType": "none",
+        "target": null,
+        "proposedDiff": null,
+        "expectedResult": null,
+        "downside": null,
+        "rollback": null,
+        "idempotencyKey": null
+      },
+      "currentOwner": "synthetic-operator",
+      "currentTime": {
+        "value": 60,
+        "unit": "minutes",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-measurement-time",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-measurement-readiness-review/time",
+          "claim": "Assumed 60 minutes per review",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "currentCost": {
+        "amount": 0,
+        "currency": "JPY",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-measurement-cost",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-measurement-readiness-review/cost",
+          "claim": "No media cost for readiness review",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "kpi": [
+        {
+          "id": "metric-task-measurement-blockers",
+          "name": "Open measurement blockers",
+          "unit": "blockers",
+          "currentValue": null,
+          "targetValue": 0,
+          "deadline": null,
+          "measurementMethod": "Count unresolved attribution or conversion gaps.",
+          "successCondition": "Zero blockers before optimization recommendation.",
+          "stopCondition": "Stop recommendation if blockers remain.",
+          "evidence": {
+            "id": "ev-metric-task-measurement",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": "fixture://task-measurement-readiness-review/kpi",
+            "claim": "Synthetic zero-blocker target",
+            "observedAt": null,
+            "note": null
+          }
+        }
+      ],
+      "qualityStandard": [
+        {
+          "id": "ac-measurement-scorecard",
+          "statement": "Scorecard marks conversion event, attribution window, and data freshness.",
+          "verificationMethod": "Checklist review",
+          "requiredEvidence": "Completed readiness scorecard"
+        }
+      ],
+      "evidence": [
+        {
+          "id": "ev-task-measurement",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-measurement-readiness-review",
+          "claim": "Synthetic measurement readiness task",
+          "observedAt": null,
+          "note": null
+        }
+      ],
+      "executionType": "undecided"
+    },
+    {
+      "id": "task-continue-change-stop-recommendation",
+      "processId": "proc-measurement-optimization",
+      "name": "Continue / change / stop recommendation",
+      "purpose": "Recommend whether to continue, change, or stop a synthetic experiment using unit economics.",
+      "inputs": [
+        "Measurement-readiness scorecard",
+        "Synthetic performance snapshot",
+        "Budget ceiling and stop rules"
+      ],
+      "outputs": [
+        "Continue/change/stop recommendation memo",
+        "Assumptions and unverified values list"
+      ],
+      "frequency": {
+        "value": 1,
+        "unit": "recommendations",
+        "period": "week",
+        "evidence": {
+          "id": "ev-task-decision-frequency",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-continue-change-stop-recommendation/frequency",
+          "claim": "Assumed weekly recommendation cadence",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "volume": {
+        "value": 1,
+        "unit": "experiments",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-decision-volume",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-continue-change-stop-recommendation/volume",
+          "claim": "One experiment decided per event",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "requiredSkills": [
+        {
+          "skillId": "skill-unit-economics-analysis",
+          "requiredLevel": 4,
+          "rationale": "Stop rules and CAC guardrails require unit-economics judgment."
+        },
+        {
+          "skillId": "skill-experiment-design",
+          "requiredLevel": 3,
+          "rationale": "Change recommendations must preserve experiment integrity."
+        }
+      ],
+      "risk": {
+        "level": "medium",
+        "reasons": ["Recommendation can bias later budget changes if treated as authority"]
+      },
+      "authority": "recommend",
+      "approval": {
+        "requiresHumanApproval": false,
+        "state": "not_required",
+        "actionType": "none",
+        "target": null,
+        "proposedDiff": null,
+        "expectedResult": null,
+        "downside": null,
+        "rollback": null,
+        "idempotencyKey": null
+      },
+      "currentOwner": "synthetic-operator",
+      "currentTime": {
+        "value": 75,
+        "unit": "minutes",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-decision-time",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-continue-change-stop-recommendation/time",
+          "claim": "Assumed 75 minutes per recommendation",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "currentCost": {
+        "amount": 0,
+        "currency": "JPY",
+        "period": "event",
+        "evidence": {
+          "id": "ev-task-decision-cost",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-continue-change-stop-recommendation/cost",
+          "claim": "Recommendation itself has no media cost",
+          "observedAt": null,
+          "note": null
+        }
+      },
+      "kpi": [
+        {
+          "id": "metric-task-decision-clarity",
+          "name": "Decision clarity",
+          "unit": "percent",
+          "currentValue": null,
+          "targetValue": 100,
+          "deadline": null,
+          "measurementMethod": "Checklist that the memo picks exactly one of continue/change/stop with reasons.",
+          "successCondition": "Single explicit decision with evidence classification preserved.",
+          "stopCondition": "Stop if unverified values are presented as confirmed.",
+          "evidence": {
+            "id": "ev-metric-task-decision",
+            "status": "assumed",
+            "sourceType": "synthetic",
+            "sourceRef": "fixture://task-continue-change-stop-recommendation/kpi",
+            "claim": "Synthetic clarity target",
+            "observedAt": null,
+            "note": null
+          }
+        }
+      ],
+      "qualityStandard": [
+        {
+          "id": "ac-decision-memo",
+          "statement": "Memo states continue, change, or stop with assumptions and unverified fields listed.",
+          "verificationMethod": "Checklist review",
+          "requiredEvidence": "Signed recommendation checklist"
+        }
+      ],
+      "evidence": [
+        {
+          "id": "ev-task-decision",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://task-continue-change-stop-recommendation",
+          "claim": "Synthetic recommendation task with no side effects",
+          "observedAt": null,
+          "note": null
+        }
+      ],
+      "executionType": "undecided"
+    }
+  ],
+  "skills": [
+    {
+      "id": "skill-unit-economics-analysis",
+      "name": "Unit-economics analysis",
+      "description": "Interpret CAC, contribution margin, and stop rules without treating forecasts as guarantees.",
+      "levelScale": {
+        "min": 1,
+        "max": 5,
+        "labels": [
+          "Aware of CAC vocabulary",
+          "Can compute simple CAC with given inputs",
+          "Can compare CAC to a target with stated assumptions",
+          "Can design stop rules from unit economics",
+          "Can challenge flawed economics narratives under uncertainty"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-skill-unit-economics",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://skill-unit-economics-analysis",
+          "claim": "Reusable synthetic skill for economics judgment",
+          "observedAt": null,
+          "note": null
+        }
+      ]
+    },
+    {
+      "id": "skill-experiment-design",
+      "name": "Experiment design",
+      "description": "Design falsifiable paid-media experiments with clear conversion events and learning goals.",
+      "levelScale": {
+        "min": 1,
+        "max": 5,
+        "labels": [
+          "Can list experiment parts",
+          "Can draft a hypothesis with a conversion event",
+          "Can specify measurement windows",
+          "Can design multi-scenario forecasts",
+          "Can redesign experiments after measurement gaps"
+        ]
+      },
+      "evidence": [
+        {
+          "id": "ev-skill-experiment-design",
+          "status": "assumed",
+          "sourceType": "synthetic",
+          "sourceRef": "fixture://skill-experiment-design",
+          "claim": "Reusable synthetic skill for experiment design",
+          "observedAt": null,
+          "note": null
+        }
+      ]
+    }
+  ]
+}
