@@ -32,6 +32,13 @@ describe('router fetch', () => {
     expect(await route(env, '/blueprint-screenshot/abc')).toBe('backend');
   });
 
+  it('routes only the exact MCP endpoint when the private bridge is bound', async () => {
+    const env = makeEnv({ ASSETS: stubFetcher('assets'), MOPRO_MCP: stubFetcher('mcp') });
+    expect(await route(env, '/mcp')).toBe('mcp');
+    expect(await route(env, '/mcp/')).toBe('mcp');
+    expect(await route(env, '/mcp-admin')).toBe('assets');
+  });
+
   it('does not treat /api-lookalike paths as backend routes', async () => {
     const env = makeEnv({ ASSETS: stubFetcher('assets') });
     expect(await route(env, '/apiary')).toBe('assets');

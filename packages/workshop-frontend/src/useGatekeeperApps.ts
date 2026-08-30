@@ -27,7 +27,7 @@ export function refreshGatekeeperApps(api: object): void {
  * bound gatekeepers. Returns [] until authenticated/loaded. `GatekeeperAppInfo` is plain data
  * (id/title/icon), so it's safe to hold in state.
  */
-export function useGatekeeperApps(): GatekeeperAppInfo[] {
+export function useGatekeeperApps(enabled = true): GatekeeperAppInfo[] {
   const auth = useOptionalAuthenticatedApi()
   const [apps, setApps] = useState<GatekeeperAppInfo[]>([])
   // Bumped by refreshGatekeeperApps() to re-run the fetch effect after the cache is invalidated.
@@ -40,7 +40,7 @@ export function useGatekeeperApps(): GatekeeperAppInfo[] {
   }, [])
 
   useEffect(() => {
-    if (!auth) {
+    if (!auth || !enabled) {
       setApps([])
       return
     }
@@ -61,7 +61,7 @@ export function useGatekeeperApps(): GatekeeperAppInfo[] {
     return () => {
       cancelled = true
     }
-  }, [auth, refreshTick])
+  }, [auth, enabled, refreshTick])
 
   return apps
 }

@@ -5,11 +5,13 @@ import { GoogleCalendarApi } from "./calendar-api";
 import { GoogleAccessToken } from "./google-api";
 import { AccessTokenProvider, AccessTokenRequest } from "./auth-retry";
 import { DriveApi, DriveApiDisabledError } from "./drive-api";
+import { SearchConsoleApi } from "./search-console-api";
 import type { BigQueryConfiguratorRpc } from "./configurator/bigquery-configurator-types";
 import type { CalendarConfiguratorRpc } from "./configurator/calendar-configurator-types";
 import type { GmailConfiguratorRpc } from "./configurator/gmail-configurator-types";
 import type { GoogleDocConfiguratorRpc } from "./configurator/google-doc-configurator-types";
 import type { GoogleSheetsConfiguratorRpc } from "./configurator/google-sheets-configurator-types";
+import type { SearchConsoleConfiguratorRpc } from "./configurator/search-console-configurator-types";
 
 type ConfiguratorOption = { value: string; title: string; subtitle?: string; meta?: string };
 /**
@@ -21,6 +23,7 @@ type ConfiguratorTokenGetter = (opts?: AccessTokenRequest) => Promise<GoogleAcce
 const googleTokenGetters = new WeakMap<object, ConfiguratorTokenGetter>();
 const calendarConfiguratorCaches = new WeakMap<object, Promise<ConfiguratorOption[]>>();
 const bigQueryConfiguratorCaches = new WeakMap<object, Map<string, ConfiguratorOption[]>>();
+const searchConsoleConfiguratorCaches = new WeakMap<object, Promise<ConfiguratorOption[]>>();
 const BIGQUERY_CONFIGURATOR_CACHE_MAX_ENTRIES = 200;
 const BIGQUERY_CONFIGURATOR_EMPTY_LIST_OPTIONS = { maxPages: 1, maxResults: 200 };
 const BIGQUERY_CONFIGURATOR_SEARCH_LIST_OPTIONS = { maxPages: 5, maxResults: 1000 };
@@ -229,5 +232,38 @@ export class GoogleSheetsConfiguratorUI extends RpcTarget implements GoogleSheet
     return listDriveFiles(
       this, query, "application/vnd.google-apps.spreadsheet", "Google Sheets",
     );
+  }
+}
+
+// RPC interface exposed by Gatekeeper to the Search Console property picker.
+@validateRpc()
+export class SearchConsoleConfiguratorUI extends RpcTarget
+    implements SearchConsoleConfiguratorRpc {
+  constructor(getToken: () => Promise<GoogleAccessToken>) {
+    super();
+    googleTokenGetters.set(this, getToken);
+  }
+
+  async listProperties(query: string): Promise<ConfiguratorOption[]> {
+    let options = searchConsoleConfiguratorCaches.get(this);
+    if (!options) {
+      options = (async () => {
+        let api = new SearchConsoleApi(googleTokenProvider(this));
+        let properties = await api.listProperties();
+        return properties
+          .filter(property => property.permissionLevel !== "siteUnverifiedUser")
+          .map(property => ({
+            value: property.siteUrl,
+            title: property.siteUrl,
+            subtitle: property.siteUrl.startsWith("sc-domain:")
+              ? "Domain property" : "URL-prefix property",
+            meta: property.permissionLevel,
+          }));
+      })();
+      options.catch(() => searchConsoleConfiguratorCaches.delete(this));
+      searchConsoleConfiguratorCaches.set(this, options);
+    }
+    return (await options).filter(option =>
+      optionMatches([option.title, option.subtitle, option.meta], query));
   }
 }

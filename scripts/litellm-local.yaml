@@ -1,0 +1,13 @@
+model_list:
+  - model_name: llama3.2:3b
+    litellm_params:
+      model: ollama_chat/llama3.2:3b
+      api_base: http://127.0.0.1:11434
+  - model_name: qwen3:8b
+    litellm_params:
+      model: ollama_chat/qwen3:8b
+      api_base: http://127.0.0.1:11434
+      think: false
+
+litellm_settings:
+  drop_params: true

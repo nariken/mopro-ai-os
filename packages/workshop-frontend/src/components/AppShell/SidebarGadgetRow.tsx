@@ -21,6 +21,7 @@ function initials(title: string | undefined): string {
 export default function SidebarGadgetRow({
   gadget,
   collapsed = false,
+  readOnly = false,
   onTogglePin,
   onRename,
   onShare,
@@ -28,6 +29,7 @@ export default function SidebarGadgetRow({
 }: {
   gadget: GadgetMetadataWithTimestamps
   collapsed?: boolean
+  readOnly?: boolean
   onTogglePin: (g: GadgetMetadataWithTimestamps) => void
   onRename: (g: GadgetMetadataWithTimestamps, newTitle: string) => void
   onShare: (g: GadgetMetadataWithTimestamps) => void
@@ -92,7 +94,7 @@ export default function SidebarGadgetRow({
 
           {/* Inside the row's <Link>: stopPropagation blocks the Link's SPA handler, so preventDefault
               is needed to stop the native <a> from navigating. */}
-          <div onClick={(e) => { e.stopPropagation(); e.preventDefault() }}>
+          {!readOnly && <div onClick={(e) => { e.stopPropagation(); e.preventDefault() }}>
             <DropdownMenu>
               <DropdownMenu.Trigger
                 render={
@@ -136,7 +138,7 @@ export default function SidebarGadgetRow({
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu>
-          </div>
+          </div>}
         </>
       )}
 

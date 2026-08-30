@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { useServerConfig } from '../ServerConfigContext'
+import defaultSiteLogoUrl from '../../../../assets/brand/mopro-ai-os-symbol.svg'
 
 export default function SiteLogo({
   size,
@@ -16,18 +17,26 @@ export default function SiteLogo({
   const configuredUrl = serverConfig?.siteLogo?.url
   const src = srcOverride === undefined ? configuredUrl : srcOverride ?? undefined
   const [failed, setFailed] = useState(false)
+  const [defaultFailed, setDefaultFailed] = useState(false)
 
-  useEffect(() => setFailed(false), [src, serverConfig])
+  useEffect(() => {
+    setFailed(false)
+    setDefaultFailed(false)
+  }, [src, serverConfig])
 
-  if (!src || failed) return children
+  const displayedSrc = !src || failed ? defaultSiteLogoUrl : src
+  if (defaultFailed) return children
   return (
     <img
-      src={src}
+      src={displayedSrc}
       alt=""
       width={size}
       height={size}
       className={`object-contain ${className ?? ''}`}
-      onError={() => setFailed(true)}
+      onError={() => {
+        if (displayedSrc === defaultSiteLogoUrl) setDefaultFailed(true)
+        else setFailed(true)
+      }}
     />
   )
 }

@@ -5,7 +5,7 @@ import { useAvatar } from '../useAvatar'
 import { MENU_CONTENT, MENU_ITEM, MENU_ITEM_DANGER, MENU_POSITIONER_STYLE } from './menuStyles'
 
 export default function UserMenu() {
-  const { authenticatedApi, logout, currentUser, isAdmin } = useAuthenticatedApi()
+  const { authenticatedApi, logout, currentUser, isAdmin, accountRole } = useAuthenticatedApi()
   const navigate = useNavigate()
 
   const avatarUrl = useAvatar(authenticatedApi, currentUser?.id)
@@ -38,12 +38,12 @@ export default function UserMenu() {
         >
           Profile
         </DropdownMenu.Item>
-        <DropdownMenu.Item
+        {accountRole !== 'operator' && <DropdownMenu.Item
           onClick={() => navigate({ to: '/providers' })}
           className={MENU_ITEM}
         >
           Providers
-        </DropdownMenu.Item>
+        </DropdownMenu.Item>}
         {isAdmin && (
           <DropdownMenu.Item
             onClick={() => navigate({ to: '/admin' })}

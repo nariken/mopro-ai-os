@@ -1,6 +1,6 @@
 import { logRpcFailure } from '../rpcErrors'
 import { useState, useEffect } from 'react'
-import { createRootRoute, Outlet, useRouterState } from '@tanstack/react-router'
+import { createRootRoute, Navigate, Outlet, useRouterState } from '@tanstack/react-router'
 import { TooltipProvider, Toasty } from '@cloudflare/kumo'
 import { RpcStub } from 'capnweb'
 import { AuthenticatedApi } from '@gadgets/workshop-shared/api'
@@ -13,6 +13,7 @@ import AppShell from '../components/AppShell/AppShell'
 import LoginPage from '../LoginPage'
 import OnboardingWizard from '../OnboardingWizard'
 import AccountSelectionModal from '../components/billing/AccountSelectionModal'
+import { useAuthenticatedApi } from '../AuthContext'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -133,10 +134,17 @@ function AuthenticatedShell({
   authenticatedApi: RpcStub<AuthenticatedApi>
   isWorkspaceEditor: boolean
 }) {
+  const { accountRole } = useAuthenticatedApi()
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
   // null = still checking, true = needs onboarding, false = onboarding done
   const [onboardingNeeded, setOnboardingNeeded] = useState<boolean | null>(null)
 
   useEffect(() => {
+    if (accountRole === null) return
+    if (accountRole === 'operator') {
+      setOnboardingNeeded(false)
+      return
+    }
     let cancelled = false
     authenticatedApi.isOnboardingCompleted().then((completed) => {
       if (!cancelled) setOnboardingNeeded(!completed)
@@ -146,10 +154,10 @@ function AuthenticatedShell({
       if (!cancelled) setOnboardingNeeded(false)
     })
     return () => { cancelled = true }
-  }, [authenticatedApi])
+  }, [accountRole, authenticatedApi])
 
   // Still checking onboarding status
-  if (onboardingNeeded === null) {
+  if (accountRole === null || onboardingNeeded === null) {
     return (
       <div className="flex min-h-full items-center justify-center flex-col gap-4 bg-kumo-base">
         <div className="w-8 h-8 border-2 border-kumo-brand border-t-transparent rounded-full animate-spin" />
@@ -162,13 +170,19 @@ function AuthenticatedShell({
     return <OnboardingWizard onComplete={() => setOnboardingNeeded(false)} />
   }
 
+  if (accountRole === 'operator' &&
+      pathname !== '/workspaces' && pathname !== '/profile' &&
+      !pathname.startsWith('/workspace/')) {
+    return <Navigate to="/workspaces" replace />
+  }
+
   // Normal app shell. The workspace editor is rendered fullscreen (no chrome); everything else
   // gets the persistent left-rail AppShell. Connection loss is surfaced by a chip in whichever of
   // those two top bars is showing, never by a banner that reflows the page (see ReconnectingChip).
   const fullscreen = isWorkspaceEditor
   return (
     <>
-      <AccountSelectionModal />
+      {accountRole === 'builder' && <AccountSelectionModal />}
       {fullscreen ? (
         <main className="h-full min-h-0">
           <Outlet />

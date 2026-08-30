@@ -193,6 +193,25 @@ This runs Cloudflare OS using `wrangler`, the Workers developer tooling CLI. Thi
 
 Your data will be stored in a subdirectory named `.wrangler`.
 
+#### Experimental: use a local Codex subscription
+
+This fork can delegate model turns to a locally-installed Codex CLI authenticated with a ChatGPT
+account. In a second terminal, verify `codex login status` and start the loopback-only bridge:
+
+    pnpm codex-bridge
+
+In **AI Providers**, add **Codex Subscription (GPT 5.6 Sol)**. No API key is required. The bridge
+binds to `127.0.0.1:8788`, runs Codex read-only and without approvals, and does not expose or copy
+the Codex login token. This route is local-development-only; a deployed Worker cannot reach it.
+
+#### MOPRO Personal local environment
+
+This fork also includes the MOPRO Personal operating profile: builder/operator roles, a Japanese
+AI-agent catalog, local MCP bridges for existing business systems, Context & Skills demo content,
+kintone integration, and a zero-API-cost local vertical-video renderer. Start and connection order,
+ports, approval boundaries, supported context formats, and current limitations are documented in
+[MOPRO Personal local operations](docs/personal-local-operations.md).
+
 ### Deploy to your own server using `workerd`
 
 **COMING SOON**

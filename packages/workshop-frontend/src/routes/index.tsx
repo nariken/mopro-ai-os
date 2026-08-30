@@ -23,12 +23,20 @@ import { useDocumentTitle } from "../useDocumentTitle";
 import { homePromptFromSearch } from "../homePrompt";
 import { composerDraftStorageKey } from "../composerDraft";
 
-type HomeSearch = { prompt?: string };
+type HomeSearch = { prompt?: string; title?: string };
+
+function workspaceTitleFromSearch(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const title = value.trim();
+  if (!title || title.length > 120) return undefined;
+  return title;
+}
 
 export const Route = createFileRoute("/")({
   component: HomePage,
   validateSearch: (search: Record<string, unknown>): HomeSearch => ({
     prompt: homePromptFromSearch(search.prompt),
+    title: workspaceTitleFromSearch(search.title),
   }),
 });
 
@@ -36,10 +44,10 @@ export const Route = createFileRoute("/")({
 // in the AppShell rail, so this page focuses on a single thing: composing the first message of a
 // new gadget — a centered column with a hero, the prompt composer, and a few task suggestions.
 function HomePage() {
-  return <HomePageContent prompt={Route.useSearch().prompt} />;
+  return <HomePageContent {...Route.useSearch()} />;
 }
 
-export function HomePageContent({ prompt }: HomeSearch) {
+export function HomePageContent({ prompt, title }: HomeSearch) {
   useDocumentTitle("Home");
 
   const { authenticatedApi, currentUser } = useAuthenticatedApi();
@@ -50,12 +58,14 @@ export function HomePageContent({ prompt }: HomeSearch) {
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   // Bumped each time a task suggestion is picked; the composer re-seeds its text off the nonce.
   const [seed, setSeed] = useState<{ text: string; nonce: number } | null>(null);
+  const initialWorkspaceTitleRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!prompt) return;
+    initialWorkspaceTitleRef.current = title ?? null;
     setSeed((previous) => ({ text: prompt, nonce: (previous?.nonce ?? 0) + 1 }));
     navigate({ to: "/", search: {}, replace: true });
-  }, [navigate, prompt]);
+  }, [navigate, prompt, title]);
 
   useEffect(() => {
     let cancelled = false;
@@ -112,6 +122,10 @@ export function HomePageContent({ prompt }: HomeSearch) {
       try {
         ensureProvisionalGadget();
         const overseer = provisionalOverseerRef.current!.stub;
+        const initialWorkspaceTitle = initialWorkspaceTitleRef.current;
+        if (initialWorkspaceTitle) {
+          await overseer.setTitle(initialWorkspaceTitle);
+        }
         // Pipeline both independent calls in one batch, but settle both before releasing the stub.
         const [chat, {id}] = await Promise.all([
           overseer.newChat(message, modelId, capsules, attachments, formats),

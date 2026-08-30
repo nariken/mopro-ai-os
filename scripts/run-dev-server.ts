@@ -30,6 +30,7 @@ const SCRIPTS_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(SCRIPTS_DIR, "..");
 const PACKAGES_DIR = join(ROOT, "packages");
 const WORKSHOP_BACKEND_DIR = join(PACKAGES_DIR, "workshop-backend");
+const CHATGPT_MCP_DIR = join(PACKAGES_DIR, "chatgpt-mcp");
 
 /** A gatekeeper package as {@link findGatekeepers} discovers it. */
 interface Gatekeeper {
@@ -99,6 +100,7 @@ function findGatekeepers(parentDir: string): Gatekeeper[] {
 }
 
 const gatekeepers = findGatekeepers(PACKAGES_DIR);
+const hasChatGptMcp = existsSync(join(CHATGPT_MCP_DIR, "wrangler.jsonc"));
 
 // The Context Library (packages/gatekeeper-context) is discovered by findGatekeepers and bound
 // like any other gatekeeper (GATEKEEPER_CONTEXT -> GatekeeperVendor). Its describe() reports
@@ -320,6 +322,22 @@ for (const gk of gatekeepers) {
   }
 }
 
+// Generate the optional ChatGPT-facing MCP worker config. Its fixed caller identity and bootstrap
+// token are local-only values supplied through the root .dev.vars; omitting either keeps the MCP
+// endpoint fail-closed while still allowing the rest of the dev stack to start.
+if (hasChatGptMcp) {
+  const srcPath = join(CHATGPT_MCP_DIR, "wrangler.jsonc");
+  const config = parse(readFileSync(srcPath, "utf8"));
+  config.vars = config.vars || {};
+  for (const name of ["MCP_ACCESS_TOKEN", "MOPRO_CALLER_EMAIL"]) {
+    if (process.env[name] !== undefined) config.vars[name] = process.env[name];
+  }
+  config.build = devBuildConfig(config.build, CHATGPT_MCP_DIR);
+  const outPath = join(CHATGPT_MCP_DIR, "wrangler.dev.jsonc");
+  writeFileSync(outPath, JSON.stringify(config, null, 2) + "\n");
+  console.log(`generated: ${outPath}`);
+}
+
 // Helper: "gatekeeper-github" -> "GATEKEEPER_GITHUB"
 function bindingName(gk: Gatekeeper): string {
   return gk.name.toUpperCase().replaceAll("-", "_");
@@ -387,6 +405,9 @@ function devBuildConfig(build: WranglerBuild | undefined, pkgDir: string): Wrang
   const config = parse(readFileSync(srcPath, "utf8"));
 
   config.services = config.services || [];
+  if (hasChatGptMcp) {
+    config.services.push({ binding: "MOPRO_MCP", service: "mopro-chatgpt-mcp" });
+  }
   for (const gk of gatekeepers) {
     config.services.push({ binding: bindingName(gk), service: gk.name });
   }
@@ -472,7 +493,8 @@ for (const gk of gatekeepers) {
 
   // For local testing, create an account named "admin" to test admin features.
   config.vars = config.vars || {};
-  config.vars.ADMINS = ["admin"];
+  config.vars.ADMINS = ["admin", "nariken"];
+  config.vars.OPERATORS = ["moprooperatortest"];
 
   // Pass through the optional OAuth sign-in / AI Gateway billing env vars from the shell
   // environment, so you can run e.g.
@@ -541,6 +563,7 @@ const configs = [
   "wrangler.dev.jsonc",
   join("packages", "workshop-backend", "wrangler.dev.jsonc"),
   ...gatekeepers.map(gk => join(gk.dir, "wrangler.dev.jsonc")),
+  ...(hasChatGptMcp ? [join("packages", "chatgpt-mcp", "wrangler.dev.jsonc")] : []),
 ];
 
 const args = configs.flatMap(c => ["-c", c]);

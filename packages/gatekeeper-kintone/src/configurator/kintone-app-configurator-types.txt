@@ -1,0 +1,1 @@
+kintone-app-configurator-types.d.ts

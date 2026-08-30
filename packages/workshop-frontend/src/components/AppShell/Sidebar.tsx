@@ -11,6 +11,7 @@ import {
   Stack,
 } from '@phosphor-icons/react'
 import { useSiteName } from '../../ServerConfigContext'
+import { useAuthenticatedApi } from '../../AuthContext'
 import SiteLogo from '../SiteLogo'
 import { useGatekeeperApps } from '../../useGatekeeperApps'
 import { openCommandPalette } from './commandPaletteBus'
@@ -42,10 +43,12 @@ export default function Sidebar({
   onToggleCollapsed: () => void
 }) {
   const siteName = useSiteName()
+  const { accountRole } = useAuthenticatedApi()
+  const isOperator = accountRole === 'operator'
   // Gatekeeper-served management apps the user can reach now (one per gatekeeper that provides a UI
   // and is connected / enabled for everyone). Disabled or not-yet-connected ones aren't returned, so
   // they simply don't appear. The set is fully dynamic — no gatekeeper is hardcoded.
-  const gatekeeperApps = useGatekeeperApps()
+  const gatekeeperApps = useGatekeeperApps(!isOperator)
 
   return (
     <aside
@@ -65,7 +68,7 @@ export default function Sidebar({
           collapsed ? 'justify-center px-1.5' : 'justify-between gap-2 px-3',
         ].join(' ')}
       >
-        <Link to="/" aria-label={siteName} className="flex min-w-0 items-center gap-2">
+        <Link to={isOperator ? '/workspaces' : '/'} aria-label={siteName} className="flex min-w-0 items-center gap-2">
           <SiteLogo size={20} className="shrink-0">
             <Hexagon size={20} weight="bold" className="text-kumo-brand shrink-0" />
           </SiteLogo>
@@ -117,32 +120,32 @@ export default function Sidebar({
         <div className="flex shrink-0 flex-col gap-3 pt-3">
           {/* Primary nav */}
           <nav className="flex flex-col gap-0.5 px-2">
-            <SidebarItem
+            {!isOperator && <SidebarItem
               to="/"
               label="Home"
               icon={<House size={14} weight="regular" />}
               collapsed={collapsed}
-            />
+            />}
             <SidebarItem
               to="/workspaces"
-              label="Workspaces"
+              label={isOperator ? 'Gadgets' : 'Workspaces'}
               icon={<SquaresFour size={14} weight="regular" />}
               collapsed={collapsed}
             />
-            <SidebarItem
+            {!isOperator && <SidebarItem
               to="/blueprints"
               label="Blueprints"
               icon={<Blueprint size={14} weight="regular" />}
               collapsed={collapsed}
-            />
-            <SidebarItem
+            />}
+            {!isOperator && <SidebarItem
               to="/outputs"
               label="Outputs"
               icon={<Stack size={14} weight="regular" />}
               collapsed={collapsed}
-            />
+            />}
             {/* Gatekeeper management apps (e.g. the Context Library), listed dynamically. */}
-            {gatekeeperApps.map((app) => {
+            {!isOperator && gatekeeperApps.map((app) => {
               // Escape the icon URL for safe interpolation into a CSS url("…") string.
               const maskUrl = app.icon
                 ? `url("${app.icon.url.replace(/[\\"]/g, '\\$&')}")`
@@ -180,16 +183,16 @@ export default function Sidebar({
               />
               )
             })}
-            <SidebarItem
+            {!isOperator && <SidebarItem
               to="/explore"
               label="Explore"
               icon={<Compass size={14} weight="regular" />}
               collapsed={collapsed}
-            />
+            />}
           </nav>
 
           {/* Workspace tools: search. Pinned so it's always reachable. */}
-          <SidebarWorkspacesTools collapsed={collapsed} />
+          {!isOperator && <SidebarWorkspacesTools collapsed={collapsed} />}
         </div>
 
         {/* Scrolling middle: only the Favorites / Recent workspaces / Recent blueprints lists.
@@ -199,7 +202,7 @@ export default function Sidebar({
         </div>
       </SidebarWorkspacesProvider>
 
-      <SidebarUtilityStrip collapsed={collapsed} />
+      <SidebarUtilityStrip collapsed={collapsed} operator={isOperator} />
     </aside>
   )
 }

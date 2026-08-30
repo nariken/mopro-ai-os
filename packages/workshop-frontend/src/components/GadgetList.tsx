@@ -37,6 +37,7 @@ function formatCost(cost: number): string {
 
 function AppRow({
   gadget,
+  operator,
   onDelete,
   onShare,
   onInfo,
@@ -44,6 +45,7 @@ function AppRow({
   onRename,
 }: {
   gadget: GadgetMetadataWithTimestamps
+  operator: boolean
   onDelete: (gadget: GadgetMetadataWithTimestamps) => void
   onShare: (gadget: GadgetMetadataWithTimestamps) => void
   onInfo: (gadget: GadgetMetadataWithTimestamps) => void
@@ -123,8 +125,8 @@ function AppRow({
         {formatRelativeTime(gadget.lastActive)}
       </span>
 
-      {/* Overflow menu — wrapper stops clicks from reaching the parent Link */}
-      <div onClick={(e) => { e.stopPropagation(); e.preventDefault() }}>
+      {/* Operators launch shared gadgets only; workspace management remains builder-only. */}
+      {!operator && <div onClick={(e) => { e.stopPropagation(); e.preventDefault() }}>
       <DropdownMenu>
         <DropdownMenu.Trigger
           render={
@@ -163,13 +165,14 @@ function AppRow({
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu>
-      </div>
+      </div>}
     </Link>
   )
 }
 
 export default function GadgetList({ showHeader = true }: { showHeader?: boolean } = {}) {
-  const { authenticatedApi } = useAuthenticatedApi()
+  const { authenticatedApi, accountRole } = useAuthenticatedApi()
+  const isOperator = accountRole === 'operator'
   const toasts = useKumoToastManager()
   const [gadgets, setGadgets] = useState<GadgetMetadataWithTimestamps[]>([])
   const [search, setSearch] = useState('')
@@ -386,13 +389,18 @@ export default function GadgetList({ showHeader = true }: { showHeader?: boolean
               No workspaces found
             </div>
           ) : (
-            <FeaturedBlueprintsGallery />
+            isOperator ? (
+              <div className="py-12 text-center text-sm text-kumo-inactive">
+                No gadgets have been shared with you yet
+              </div>
+            ) : <FeaturedBlueprintsGallery />
           )
         ) : (
           filtered.map((gadget) => (
             <AppRow
               key={gadget.id}
               gadget={gadget}
+              operator={isOperator}
               onDelete={handleDelete}
               onShare={handleShare}
               onInfo={setInfoTarget}

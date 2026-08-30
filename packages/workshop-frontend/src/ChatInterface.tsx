@@ -6092,7 +6092,10 @@ function ChatInterface({
       toasts.add({ title: "Changes accepted", variant: "success" });
     } catch (err) {
       console.error("Failed to accept changes:", err);
-      toasts.add({ title: "Failed to accept changes", variant: "error" });
+      toasts.add({
+        title: err instanceof Error ? err.message : "Failed to accept changes",
+        variant: "error",
+      });
     }
   };
 

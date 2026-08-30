@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AiChatAuthorInfo, AiModelConfig } from "@gadgets/workshop-shared/api";
 import { getModel, type ModelHandle } from "../src/ai-models.js";
 
@@ -30,6 +30,11 @@ const WORKERS_AI_CONFIG: AiModelConfig = {
   provider: "cloudflare",
   model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   apiToken: "ignored-in-gateway-mode",
+};
+
+const CODEX_CONFIG: AiModelConfig = {
+  provider: "codex",
+  model: "codex:gpt-5.6-sol",
 };
 
 function env(overrides: Partial<Cloudflare.Env> = {}): Cloudflare.Env {
@@ -64,6 +69,119 @@ async function captureRequest(handle: ModelHandle): Promise<CapturedRequest> {
   expect(capturedRequests.length).toBeGreaterThan(0);
   return capturedRequests[0];
 }
+
+describe("getModel Codex subscription routing", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("bypasses both platform and user AI Gateways", () => {
+    const handle = getModel(env(), CODEX_CONFIG, INITIATOR, {
+      userGateway: { accountId: "user-account-id", apiKey: "user-token" },
+    });
+
+    expect(handle.model.api).toBe("codex-subscription");
+    expect(handle.model.provider).toBe("openai-codex");
+    expect(handle.model.baseUrl).toBe("http://127.0.0.1:8788");
+    expect(handle.aiGatewayLogRoute).toBeUndefined();
+  });
+
+  it("fails closed when the bridge is unavailable", async () => {
+    const requests: string[] = [];
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL) => {
+      requests.push(String(input));
+      throw new Error("bridge unavailable");
+    });
+    const handle = getModel(env(), CODEX_CONFIG, INITIATOR, {
+      userGateway: { accountId: "user-account-id", apiKey: "user-token" },
+    });
+
+    const stream = handle.stream(handle.model, {
+      messages: [{ role: "user", content: "hello", timestamp: 0 }],
+    });
+    const message = await stream.result();
+
+    expect(message.stopReason).toBe("error");
+    expect(message.errorMessage).toContain("bridge unavailable");
+    expect(requests).toEqual(["http://127.0.0.1:8788/v1/respond"]);
+  });
+
+  it("uses only the configured bridge URL for inference", async () => {
+    const requests: Request[] = [];
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+      requests.push(new Request(input, init));
+      return Response.json({ content: "subscription response", toolCalls: [] });
+    });
+    const handle = getModel(env(), {
+      ...CODEX_CONFIG,
+      apiUrl: "http://127.0.0.1:9876/",
+      apiToken: "must-not-be-sent",
+    }, INITIATOR);
+
+    const stream = handle.stream(handle.model, {
+      messages: [{ role: "user", content: "hello", timestamp: 0 }],
+    });
+    const message = await stream.result();
+
+    expect(message.stopReason).toBe("stop");
+    expect(message.content).toEqual([{ type: "text", text: "subscription response" }]);
+    expect(requests).toHaveLength(1);
+    expect(requests[0].url).toBe("http://127.0.0.1:9876/v1/respond");
+    expect(requests[0].headers.get("authorization")).toBeNull();
+    expect(requests[0].headers.get("cf-aig-authorization")).toBeNull();
+  });
+
+  it("logs subscription route metadata without prompt or response content", async () => {
+    const info = vi.spyOn(console, "info").mockImplementation(() => {});
+    vi.stubGlobal("fetch", async () =>
+      Response.json({ content: "sensitive response body", toolCalls: [] }));
+    const handle = getModel(env(), CODEX_CONFIG, INITIATOR);
+
+    const message = await handle.stream(handle.model, {
+      messages: [{ role: "user", content: "sensitive prompt body", timestamp: 0 }],
+    }).result();
+
+    expect(message.stopReason).toBe("stop");
+    expect(info).toHaveBeenCalledOnce();
+    const event = info.mock.calls[0][0] as Record<string, unknown>;
+    expect(event).toMatchObject({
+      component: "workshop.ai.subscription",
+      event: "ai.subscription.inference.finished",
+      modelId: "codex:gpt-5.6-sol",
+      modelProvider: "openai-codex",
+      modelRoute: "subscription",
+      outcome: "ok",
+      toolCallCount: 0,
+    });
+    expect(event.durationMs).toEqual(expect.any(Number));
+    expect(JSON.stringify(event)).not.toContain("sensitive prompt body");
+    expect(JSON.stringify(event)).not.toContain("sensitive response body");
+  });
+
+  it("logs failed subscription metadata without exposing the bridge response body", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.stubGlobal("fetch", async () =>
+      new Response("provider diagnostic containing a secret", { status: 500 }));
+    const handle = getModel(env(), CODEX_CONFIG, INITIATOR);
+
+    const message = await handle.stream(handle.model, {
+      messages: [{ role: "user", content: "hello", timestamp: 0 }],
+    }).result();
+
+    expect(message.stopReason).toBe("error");
+    expect(message.errorMessage).toBe("Codex subscription bridge returned HTTP 500.");
+    expect(warn).toHaveBeenCalledOnce();
+    const event = warn.mock.calls[0][0] as Record<string, unknown>;
+    expect(event).toMatchObject({
+      component: "workshop.ai.subscription",
+      event: "ai.subscription.inference.finished",
+      modelRoute: "subscription",
+      outcome: "error",
+      toolCallCount: 0,
+    });
+    expect(JSON.stringify(event)).not.toContain("provider diagnostic");
+  });
+});
 
 describe("getModel AI Gateway routing", () => {
   beforeEach(() => {

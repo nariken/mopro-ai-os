@@ -13,6 +13,9 @@ import { validateGmailLabelName, validateGmailQueryForGrouping } from "./gmail-v
 /** Host serving the synthetic BigQuery resource URLs. */
 export const BIGQUERY_HOST = "bigquery.googleapis.com";
 
+/** Host serving synthetic Search Console property resource URLs. */
+export const SEARCH_CONSOLE_HOST = "searchconsole.googleapis.com";
+
 /**
  * Scopes requested on every connection, to identify the account (name, email, avatar). Tied to no
  * resource type.
@@ -70,6 +73,14 @@ export const BIGQUERY_RESOURCE: SupportedResource = {
   grantable: true,
 };
 
+/** A single Google Search Console property. */
+export const SEARCH_CONSOLE_RESOURCE: SupportedResource = {
+  urlPattern: `https://${SEARCH_CONSOLE_HOST}/property/:siteUrl/*`,
+  title: "Google Search Console Property",
+  description: "Read sitemaps and inspect indexed URLs for one property.",
+  grantable: true,
+};
+
 /**
  * The resources an account connected before per-resource scope tracking implicitly received.
  *
@@ -123,6 +134,10 @@ export const RESOURCE_SCOPES: {resource: SupportedResource, scopes: string[]}[] 
       "https://www.googleapis.com/auth/bigquery",
     ],
   },
+  {
+    resource: SEARCH_CONSOLE_RESOURCE,
+    scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],
+  },
 ];
 
 /** Every grantable resource, in declaration order. */
@@ -175,7 +190,8 @@ export type ResourceTarget =
   | { kind: "doc"; documentId: string }
   | { kind: "sheets"; spreadsheetId: string }
   | { kind: "calendar"; calendarId: string; availabilityMode: CalendarAvailabilityMode }
-  | { kind: "bigquery"; projectId: string; datasetId?: string; tableId?: string };
+  | { kind: "bigquery"; projectId: string; datasetId?: string; tableId?: string }
+  | { kind: "searchConsole"; siteUrl: string };
 
 /** The grantable resource each {@link ResourceTarget} kind belongs to. */
 export const RESOURCE_BY_KIND: Record<ResourceTarget["kind"], SupportedResource> = {
@@ -184,6 +200,7 @@ export const RESOURCE_BY_KIND: Record<ResourceTarget["kind"], SupportedResource>
   sheets: GOOGLE_SHEETS_RESOURCE,
   calendar: GOOGLE_CALENDAR_RESOURCE,
   bigquery: BIGQUERY_RESOURCE,
+  searchConsole: SEARCH_CONSOLE_RESOURCE,
 };
 
 /**
@@ -211,8 +228,26 @@ export function parseResourceUrl(url: string): ResourceTarget {
     case "docs.google.com": return parseDocsUrl(parsed);
     case "calendar.google.com": return parseCalendarUrl(parsed);
     case BIGQUERY_HOST: return parseBigQueryUrl(parsed);
+    case SEARCH_CONSOLE_HOST: return parseSearchConsoleUrl(parsed);
   }
   throw new Error(`Unsupported Google resource URL host: ${parsed.hostname}`);
+}
+
+function parseSearchConsoleUrl(parsed: URL): ResourceTarget {
+  let match = parsed.pathname.match(/^\/property\/([^/]+)\/?$/);
+  if (!match) {
+    throw new Error(`Unsupported Search Console resource URL: ${describeUrl(parsed)}`);
+  }
+  let siteUrl: string;
+  try {
+    siteUrl = decodeURIComponent(match[1]);
+  } catch {
+    throw new Error("Search Console property identifier is not valid URL encoding.");
+  }
+  if (!siteUrl || !(siteUrl.startsWith("sc-domain:") || /^https?:\/\//.test(siteUrl))) {
+    throw new Error("Search Console property must be a Domain or URL-prefix property.");
+  }
+  return {kind: "searchConsole", siteUrl};
 }
 
 /**

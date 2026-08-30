@@ -1,0 +1,537 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mopro.ai/schemas/workforce-definition/1.0.0.json",
+  "title": "WorkforceDefinition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "definitionId",
+    "title",
+    "occupationCatalogId",
+    "provenance",
+    "businesses",
+    "processes",
+    "tasks",
+    "skills"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "definitionId": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "occupationCatalogId": { "const": "marketing-ad-strategy" },
+    "provenance": { "$ref": "#/$defs/DocumentProvenance" },
+    "businesses": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Business" }
+    },
+    "processes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Process" }
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Task" }
+    },
+    "skills": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Skill" }
+    }
+  },
+  "$defs": {
+    "EvidenceStatus": {
+      "type": "string",
+      "enum": ["observed", "assumed", "unverified"]
+    },
+    "EvidenceSourceType": {
+      "type": "string",
+      "enum": ["repository", "notion", "issue", "synthetic", "human", "other"]
+    },
+    "QuantityPeriod": {
+      "type": ["string", "null"],
+      "enum": ["event", "day", "week", "month", "quarter", "year", null]
+    },
+    "FiniteNonNegative": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "number", "minimum": 0 }
+      ]
+    },
+    "EvidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "sourceType",
+        "sourceRef",
+        "claim",
+        "observedAt",
+        "note"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "status": { "$ref": "#/$defs/EvidenceStatus" },
+        "sourceType": { "$ref": "#/$defs/EvidenceSourceType" },
+        "sourceRef": { "type": ["string", "null"] },
+        "claim": { "type": "string", "minLength": 1 },
+        "observedAt": { "type": ["string", "null"], "format": "date-time" },
+        "note": { "type": ["string", "null"] }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "observed" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "sourceRef": { "type": "string", "minLength": 1 },
+              "observedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      ]
+    },
+    "DocumentProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "generatedAt", "sources"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["synthetic", "real"] },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/EvidenceRef" }
+        }
+      }
+    },
+    "Quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "period", "evidence"],
+      "properties": {
+        "value": { "$ref": "#/$defs/FiniteNonNegative" },
+        "unit": { "type": "string", "minLength": 1 },
+        "period": { "$ref": "#/$defs/QuantityPeriod" },
+        "evidence": { "$ref": "#/$defs/EvidenceRef" }
+      }
+    },
+    "Money": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["amount", "currency", "period", "evidence"],
+      "properties": {
+        "amount": { "$ref": "#/$defs/FiniteNonNegative" },
+        "currency": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 3,
+          "pattern": "^[A-Z]{3}$"
+        },
+        "period": { "$ref": "#/$defs/QuantityPeriod" },
+        "evidence": { "$ref": "#/$defs/EvidenceRef" }
+      }
+    },
+    "Metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "unit",
+        "currentValue",
+        "targetValue",
+        "deadline",
+        "measurementMethod",
+        "successCondition",
+        "stopCondition",
+        "evidence"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "unit": { "type": "string", "minLength": 1 },
+        "currentValue": { "$ref": "#/$defs/FiniteNonNegative" },
+        "targetValue": { "$ref": "#/$defs/FiniteNonNegative" },
+        "deadline": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "measurementMethod": { "type": "string", "minLength": 1 },
+        "successCondition": { "type": "string", "minLength": 1 },
+        "stopCondition": { "type": "string", "minLength": 1 },
+        "evidence": { "$ref": "#/$defs/EvidenceRef" }
+      }
+    },
+    "AcceptanceCriterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "verificationMethod", "requiredEvidence"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "statement": { "type": "string", "minLength": 1 },
+        "verificationMethod": { "type": "string", "minLength": 1 },
+        "requiredEvidence": { "type": "string", "minLength": 1 }
+      }
+    },
+    "Business": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "purpose",
+        "targetCustomers",
+        "valueProposition",
+        "outcomeMetrics",
+        "processIds",
+        "constraints",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^biz-[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "purpose": { "type": "string", "minLength": 1 },
+        "targetCustomers": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "valueProposition": { "type": "string", "minLength": 1 },
+        "outcomeMetrics": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/Metric" }
+        },
+        "processIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^proc-[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/EvidenceRef" }
+        }
+      }
+    },
+    "Process": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "businessId",
+        "name",
+        "purpose",
+        "trigger",
+        "exitCondition",
+        "kpis",
+        "taskIds",
+        "dependsOnProcessIds",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^proc-[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "businessId": {
+          "type": "string",
+          "pattern": "^biz-[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "purpose": { "type": "string", "minLength": 1 },
+        "trigger": { "type": "string", "minLength": 1 },
+        "exitCondition": { "type": "string", "minLength": 1 },
+        "kpis": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/Metric" }
+        },
+        "taskIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^task-[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "dependsOnProcessIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^proc-[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/EvidenceRef" }
+        }
+      }
+    },
+    "Skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "description", "levelScale", "evidence"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^skill-[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "levelScale": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["min", "max", "labels"],
+          "properties": {
+            "min": { "const": 1 },
+            "max": { "const": 5 },
+            "labels": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 5,
+              "items": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/EvidenceRef" }
+        }
+      }
+    },
+    "RequiredSkill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["skillId", "requiredLevel", "rationale"],
+      "properties": {
+        "skillId": {
+          "type": "string",
+          "pattern": "^skill-[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "requiredLevel": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "rationale": { "type": "string", "minLength": 1 }
+      }
+    },
+    "ApprovalGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requiresHumanApproval",
+        "state",
+        "actionType",
+        "target",
+        "proposedDiff",
+        "expectedResult",
+        "downside",
+        "rollback",
+        "idempotencyKey"
+      ],
+      "properties": {
+        "requiresHumanApproval": { "type": "boolean" },
+        "state": {
+          "type": "string",
+          "enum": [
+            "not_required",
+            "draft",
+            "pending",
+            "approved",
+            "rejected",
+            "executed"
+          ]
+        },
+        "actionType": {
+          "type": "string",
+          "enum": [
+            "none",
+            "external_write",
+            "publish",
+            "account_connect",
+            "budget_commit",
+            "campaign_launch",
+            "budget_change",
+            "campaign_pause",
+            "audience_upload",
+            "creative_publish",
+            "destructive_change",
+            "production_deploy"
+          ]
+        },
+        "target": { "type": ["string", "null"] },
+        "proposedDiff": { "type": ["string", "null"] },
+        "expectedResult": { "type": ["string", "null"] },
+        "downside": { "type": ["string", "null"] },
+        "rollback": { "type": ["string", "null"] },
+        "idempotencyKey": { "type": ["string", "null"] }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "actionType": { "const": "none" } },
+            "required": ["actionType"]
+          },
+          "then": {
+            "properties": {
+              "requiresHumanApproval": { "const": false },
+              "state": { "const": "not_required" },
+              "target": { "type": "null" },
+              "proposedDiff": { "type": "null" },
+              "expectedResult": { "type": "null" },
+              "downside": { "type": "null" },
+              "rollback": { "type": "null" },
+              "idempotencyKey": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "actionType": {
+                "enum": [
+                  "external_write",
+                  "publish",
+                  "account_connect",
+                  "budget_commit",
+                  "campaign_launch",
+                  "budget_change",
+                  "campaign_pause",
+                  "audience_upload",
+                  "creative_publish",
+                  "destructive_change",
+                  "production_deploy"
+                ]
+              }
+            },
+            "required": ["actionType"]
+          },
+          "then": {
+            "properties": {
+              "requiresHumanApproval": { "const": true },
+              "state": {
+                "enum": ["draft", "pending", "approved", "rejected"]
+              },
+              "target": { "type": "string", "minLength": 1 },
+              "proposedDiff": { "type": "string", "minLength": 1 },
+              "expectedResult": { "type": "string", "minLength": 1 },
+              "downside": { "type": "string", "minLength": 1 },
+              "rollback": { "type": "string", "minLength": 1 },
+              "idempotencyKey": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "Task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "processId",
+        "name",
+        "purpose",
+        "inputs",
+        "outputs",
+        "frequency",
+        "volume",
+        "requiredSkills",
+        "risk",
+        "authority",
+        "approval",
+        "currentOwner",
+        "currentTime",
+        "currentCost",
+        "kpi",
+        "qualityStandard",
+        "evidence",
+        "executionType"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^task-[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "processId": {
+          "type": "string",
+          "pattern": "^proc-[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "purpose": { "type": "string", "minLength": 1 },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "outputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "frequency": { "$ref": "#/$defs/Quantity" },
+        "volume": { "$ref": "#/$defs/Quantity" },
+        "requiredSkills": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/RequiredSkill" }
+        },
+        "risk": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["level", "reasons"],
+          "properties": {
+            "level": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "critical"]
+            },
+            "reasons": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "authority": {
+          "type": "string",
+          "enum": ["draft", "recommend", "execute_after_approval"]
+        },
+        "approval": { "$ref": "#/$defs/ApprovalGate" },
+        "currentOwner": { "type": ["string", "null"] },
+        "currentTime": { "$ref": "#/$defs/Quantity" },
+        "currentCost": { "$ref": "#/$defs/Money" },
+        "kpi": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/Metric" }
+        },
+        "qualityStandard": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/AcceptanceCriterion" }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/EvidenceRef" }
+        },
+        "executionType": { "const": "undecided" }
+      }
+    }
+  }
+}

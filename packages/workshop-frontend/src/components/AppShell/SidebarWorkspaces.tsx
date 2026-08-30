@@ -293,6 +293,8 @@ export function SidebarWorkspacesTools({ collapsed = false }: { collapsed?: bool
  * ─────────────────────────────────────────────────────────────────────────────
  */
 export function SidebarWorkspacesLists({ collapsed = false }: { collapsed?: boolean }) {
+  const { accountRole } = useAuthenticatedApi()
+  const readOnly = accountRole === 'operator'
   const {
     search,
     favorites,
@@ -316,6 +318,7 @@ export function SidebarWorkspacesLists({ collapsed = false }: { collapsed?: bool
             key={g.id}
             gadget={g}
             collapsed
+            readOnly={readOnly}
             onTogglePin={onTogglePin}
             onRename={onRename}
             onShare={onShare}
@@ -349,6 +352,7 @@ export function SidebarWorkspacesLists({ collapsed = false }: { collapsed?: bool
               <SidebarGadgetRow
                 key={g.id}
                 gadget={g}
+                readOnly={readOnly}
                 onTogglePin={onTogglePin}
                 onRename={onRename}
                 onShare={onShare}
@@ -382,6 +386,7 @@ export function SidebarWorkspacesLists({ collapsed = false }: { collapsed?: bool
                 <SidebarGadgetRow
                   key={g.id}
                   gadget={g}
+                  readOnly={readOnly}
                   onTogglePin={onTogglePin}
                   onRename={onRename}
                   onShare={onShare}

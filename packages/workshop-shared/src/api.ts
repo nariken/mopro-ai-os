@@ -361,6 +361,9 @@ export interface AuthenticatedApi extends RpcTarget {
   /** Get profile info for the user who is logged in. */
   whoami(): Promise<AiChatAuthorInfo>;
 
+  /** Get the deployment-level product role for the logged-in account. */
+  getAccountRole(): Promise<AccountRole>;
+
   /** Set the user's own display name, seen in chats, etc. */
   setOwnDisplayName(name: string): Promise<void>;
 
@@ -715,6 +718,9 @@ export interface AuthenticatedApi extends RpcTarget {
   // - Edit permissions on a connected account.
 }
 
+/** Deployment-level product access granted to an authenticated account. */
+export type AccountRole = "builder" | "operator";
+
 /** Describes a gatekeeper's management app, for the Workshop nav + page. */
 export type GatekeeperAppInfo = {
   /**
@@ -837,7 +843,7 @@ export const MAX_SITE_NAME_LENGTH = 40;
  * What this deployment calls itself when the admin has not set a custom `siteName`. Also the
  * product's own name, so it appears in prose the server and UI address to the user.
  */
-export const DEFAULT_SITE_NAME = "Cloudflare OS";
+export const DEFAULT_SITE_NAME = "MOPRO AI OS";
 
 /**
  * The name to display for this deployment. Accepts an unset or not-yet-loaded `siteName` so both
@@ -859,7 +865,7 @@ export type AdminSettingsView = {
   signupsEnabled: boolean;
   /** Site name shown next to the top-bar logo ("" falls back to DEFAULT_SITE_NAME). */
   siteName: string;
-  /** Custom deployment logo, or undefined to use the default Cloudflare OS mark. */
+  /** Custom deployment logo, or undefined to use the default MOPRO AI OS mark. */
   siteLogo?: AvatarImage;
   /** Agent system-prompt instructions ("" when unset). */
   instanceInstructions: string;
@@ -939,7 +945,7 @@ export interface AdminApi {
   setSiteName(name: string): Promise<void>;
 
   /** Set the deployment logo from browser-rasterized PNG bytes and return its canonical public
-   * image, or undefined after reset. Pass null to restore the default Cloudflare OS mark. The
+   * image, or undefined after reset. Pass null to restore the default MOPRO AI OS mark. The
    * caller must supply decodable PNG data; the server enforces its header, size, and dimensions. */
   setSiteLogo(data: Uint8Array | null): Promise<AvatarImage | undefined>;
 
@@ -1083,7 +1089,7 @@ export type ServerConfig = {
    */
   siteName: string;
 
-  /** Custom deployment logo, or undefined to use the default Cloudflare OS mark. */
+  /** Custom deployment logo, or undefined to use the default MOPRO AI OS mark. */
   siteLogo?: AvatarImage;
 
   /** Deployment-wide top-bar notice (centered text in the top navigation bar). Empty when none is set. */
@@ -1137,7 +1143,8 @@ export type CloudflareAccountOption = {
 };
 
 /** Supported AI providers. */
-export type AiModelProvider = "openai" | "anthropic" | "google" | "cloudflare" | "ollama";
+export type AiModelProvider =
+    "openai" | "anthropic" | "google" | "cloudflare" | "ollama" | "codex";
 
 /** Information about the AI gateway configuration. Returned by `AuthenticatedApi.getAiConfig()`. */
 export type AiGatewayInfo = {
@@ -1207,6 +1214,11 @@ export const SUGGESTED_MODELS: Record<
     "gpt-5.6-sol": {name: "GPT 5.6 Sol", contextWindow: 1050000, outputLimit: 128000},
     "gpt-5.6-luna": {name: "GPT 5.6 Luna", contextWindow: 1050000, outputLimit: 128000},
     "gpt-5.6-terra": {name: "GPT 5.6 Terra", contextWindow: 1050000, outputLimit: 128000},
+  },
+  "codex": {
+    "codex:gpt-5.6-sol": {
+      name: "Codex Subscription (GPT 5.6 Sol)", contextWindow: 1050000, outputLimit: 128000,
+    },
   },
   "google": {
     "gemini-3.6-flash": {name: "Gemini 3.6 Flash", contextWindow: 1048576},
