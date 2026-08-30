@@ -4,6 +4,8 @@ User-facing vocabulary and local rerun guide for the Advertising Strategy Operat
 (`marketing-ad-strategy`) M1 package.
 
 Architecture contract: `docs/workforce-compiler-m1-design.md`.
+Next milestone contract: `docs/workforce-compiler-m2-design.md` (placement decision,
+not yet implemented).
 
 ## Vocabulary
 
@@ -28,8 +30,8 @@ In scope for M1:
 
 Out of scope:
 
-- AI / hire / outsource recommendations
-- JD, SOW, skill-gap, or onboarding generation
+- AI / hire / outsource recommendations (M2; see the M2 design contract)
+- JD, SOW, skill-gap, or onboarding generation (M2 and later)
 - Gatekeeper bindings, credentials, network calls, production deploy
 - Real ad-account actions (launch, budget change, audience upload, …)
 
@@ -40,6 +42,8 @@ packages/workforce-compiler/          # schema, types, validator, tests
 docs/fixtures/workforce-compiler/     # synthetic fixture
 docs/workforce-compiler.md            # this guide
 docs/workforce-compiler-m1-design.md  # Stage 2 architecture contract
+docs/workforce-compiler-m2-design.md  # Stage 7 M2 contract (design only)
+docs/architecture/workforce-compiler-m2-adr.md  # M2 decision records
 ```
 
 ## Validate the fixture
