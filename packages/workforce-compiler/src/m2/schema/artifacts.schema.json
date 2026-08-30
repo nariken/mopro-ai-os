@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mopro.ai/schemas/workforce-artifacts/2.0.0.json",
+  "title": "DraftArtifact",
+  "type": "object",
+  "required": [
+    "id",
+    "artifactType",
+    "status",
+    "deliveryChannel",
+    "taskIds",
+    "skillIds",
+    "candidate",
+    "ruleSetVersion",
+    "generatedAt",
+    "evidenceRefs",
+    "unresolved",
+    "body"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "artifactType": { "type": "string", "enum": ["skill_gap", "ai_agent_spec", "job_description", "outsourcing_sow"] },
+    "status": { "const": "draft" },
+    "deliveryChannel": { "const": "local_only" },
+    "taskIds": { "type": "array", "items": { "type": "string" } },
+    "skillIds": { "type": "array", "items": { "type": "string" } },
+    "candidate": { "type": "string", "enum": ["ai", "existing_staff", "hire", "outsource"] },
+    "ruleSetVersion": { "type": "string" },
+    "generatedAt": { "type": "string" },
+    "evidenceRefs": { "type": "array" },
+    "unresolved": { "type": "array" },
+    "body": { "type": "object" }
+  }
+}

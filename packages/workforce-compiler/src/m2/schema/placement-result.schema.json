@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mopro.ai/schemas/workforce-placement-result/2.0.0.json",
+  "title": "PlacementResult",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "ruleSetVersion",
+    "analysisId",
+    "generatedAt",
+    "definitionRef",
+    "valid",
+    "issues",
+    "tasks"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "2.0.0" },
+    "ruleSetVersion": { "type": "string" },
+    "analysisId": { "type": "string" },
+    "generatedAt": { "type": "string" },
+    "definitionRef": { "type": "object" },
+    "valid": { "type": "boolean" },
+    "issues": { "type": "array" },
+    "tasks": { "type": "array" }
+  }
+}
