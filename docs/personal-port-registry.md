@@ -28,6 +28,19 @@ pnpm mopro:start -- --with-local-mcp
 MOPRO service. A different service on 3000, 8787, or 8788 is a hard failure. The frontend uses
 Vite's `--strictPort`, so it never silently moves away from 3000.
 
+## WebSocket routing (Vite DEV)
+
+The Workshop browser opens Cap'n Web RPC at `/api` over WebSocket. Port ownership stays as in the
+table above; only the host selection changes with how the page is opened:
+
+| Page origin | WebSocket target |
+| --- | --- |
+| `http://localhost:3000` or `http://127.0.0.1:3000` | `ws://127.0.0.1:8787/api` (local Router). A remote `VITE_BACKEND_HOST` is ignored so Tailnet TLS hosts do not break loopback. |
+| Tailnet HTTPS (non-loopback page) | `wss://` to `VITE_BACKEND_HOST` when set (TLS-capable Router route), otherwise the page host. |
+
+Do not expose 8788 or optional MCP ports (8790–8794) beyond loopback. Built assets (production /
+`run-local`) stay same-origin and do not consult `VITE_BACKEND_HOST`.
+
 The default command starts only the three core MOPRO processes. `--with-local-mcp` also starts
 Chatwork, Mattermost, Multica, and local-video MCP services. It does not start or restart Multica
 Desktop, the Multica Docker stack, or the Homebrew daemon. The Desktop daemon must use profile

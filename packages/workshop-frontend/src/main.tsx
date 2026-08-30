@@ -13,6 +13,7 @@ import './styles.css'
 import FrontendErrorBoundary from './FrontendErrorBoundary'
 import { installWorkshopErrorReporting, reportIssue } from './errorReporting'
 import { applySiteFavicon, cacheBustSiteLogoUrl } from './siteLogoUtils'
+import { resolveWebSocketApiUrl } from './backendEndpoint'
 
 // ---------------------------------------------------------------------------
 // Dev auto-login: if VITE_DEV_AUTO_LOGIN=true, automatically create/login
@@ -82,19 +83,18 @@ const withTimeout = <T,>(promise: Promise<T>, ms: number): Promise<T> => {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 };
 
-function getBackendHost(): string {
-  // Only the Vite dev server is hosted separately from the backend. Built assets are served from
-  // the same origin in both production and run-local mode.
-  if (import.meta.env.DEV) {
-    return import.meta.env.VITE_BACKEND_HOST?.trim() || 'localhost:8787';
-  }
-  return window.location.host;
-}
-
 function startConnection(): RpcStub<PublicApi> {
   lastConnectTime = Date.now();
-  const apiHost = getBackendHost();
-  const wsUrl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + apiHost + '/api';
+  // Vite DEV may set VITE_BACKEND_HOST to a Tailnet TLS Router for HTTPS access. A loopback page
+  // must still open the local Router (127.0.0.1:8787) — a fixed remote host from localhost yields
+  // ws://…:8443 and HTTP 400. Production / run-local assets share origin with the Worker.
+  const wsUrl = resolveWebSocketApiUrl({
+    isDev: import.meta.env.DEV,
+    pageProtocol: window.location.protocol,
+    pageHostname: window.location.hostname,
+    pageHost: window.location.host,
+    viteBackendHost: import.meta.env.VITE_BACKEND_HOST,
+  });
   const stub = newWebSocketRpcSession<PublicApi>(wsUrl);
   stub.onRpcBroken(handleBroken);
   return stub;
