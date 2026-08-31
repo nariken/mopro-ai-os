@@ -21,9 +21,14 @@ import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as WorkspacesRouteImport } from './routes/workspaces'
 import { Route as BlueprintIdRouteImport } from './routes/blueprint.$id'
+import { Route as DemoIndexRouteImport } from './routes/demo.index'
+import { Route as DemoWantedRouteImport } from './routes/demo.wanted'
+import { Route as DemoWishRouteImport } from './routes/demo.wish'
 import { Route as GadgetIdRouteImport } from './routes/gadget.$id'
 import { Route as GatekeepersAppIdRouteImport } from './routes/gatekeepers_.$appId'
 import { Route as WorkspaceIdRouteImport } from './routes/workspace.$id'
+import { Route as DemoMatchMatchIdRouteImport } from './routes/demo.match.$matchId'
+import { Route as DemoWishWishIdConfirmRouteImport } from './routes/demo.wish_.$wishId.confirm'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -85,6 +90,21 @@ const BlueprintIdRoute = BlueprintIdRouteImport.update({
   path: '/blueprint/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoIndexRoute = DemoIndexRouteImport.update({
+  id: '/demo/',
+  path: '/demo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoWantedRoute = DemoWantedRouteImport.update({
+  id: '/demo/wanted',
+  path: '/demo/wanted',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoWishRoute = DemoWishRouteImport.update({
+  id: '/demo/wish',
+  path: '/demo/wish',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GadgetIdRoute = GadgetIdRouteImport.update({
   id: '/gadget/$id',
   path: '/gadget/$id',
@@ -98,6 +118,16 @@ const GatekeepersAppIdRoute = GatekeepersAppIdRouteImport.update({
 const WorkspaceIdRoute = WorkspaceIdRouteImport.update({
   id: '/workspace/$id',
   path: '/workspace/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoMatchMatchIdRoute = DemoMatchMatchIdRouteImport.update({
+  id: '/demo/match/$matchId',
+  path: '/demo/match/$matchId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoWishWishIdConfirmRoute = DemoWishWishIdConfirmRouteImport.update({
+  id: '/demo/wish_/$wishId/confirm',
+  path: '/demo/wish/$wishId/confirm',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -114,9 +144,14 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/workspaces': typeof WorkspacesRoute
   '/blueprint/$id': typeof BlueprintIdRoute
+  '/demo/wanted': typeof DemoWantedRoute
+  '/demo/wish': typeof DemoWishRoute
   '/gadget/$id': typeof GadgetIdRoute
   '/gatekeepers/$appId': typeof GatekeepersAppIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
+  '/demo/': typeof DemoIndexRoute
+  '/demo/match/$matchId': typeof DemoMatchMatchIdRoute
+  '/demo/wish/$wishId/confirm': typeof DemoWishWishIdConfirmRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -131,9 +166,14 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/workspaces': typeof WorkspacesRoute
   '/blueprint/$id': typeof BlueprintIdRoute
+  '/demo/wanted': typeof DemoWantedRoute
+  '/demo/wish': typeof DemoWishRoute
   '/gadget/$id': typeof GadgetIdRoute
   '/gatekeepers/$appId': typeof GatekeepersAppIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
+  '/demo': typeof DemoIndexRoute
+  '/demo/match/$matchId': typeof DemoMatchMatchIdRoute
+  '/demo/wish/$wishId/confirm': typeof DemoWishWishIdConfirmRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -149,9 +189,14 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/workspaces': typeof WorkspacesRoute
   '/blueprint/$id': typeof BlueprintIdRoute
+  '/demo/wanted': typeof DemoWantedRoute
+  '/demo/wish': typeof DemoWishRoute
   '/gadget/$id': typeof GadgetIdRoute
   '/gatekeepers_/$appId': typeof GatekeepersAppIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
+  '/demo/': typeof DemoIndexRoute
+  '/demo/match/$matchId': typeof DemoMatchMatchIdRoute
+  '/demo/wish_/$wishId/confirm': typeof DemoWishWishIdConfirmRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -168,9 +213,14 @@ export interface FileRouteTypes {
     | '/signup'
     | '/workspaces'
     | '/blueprint/$id'
+    | '/demo/wanted'
+    | '/demo/wish'
     | '/gadget/$id'
     | '/gatekeepers/$appId'
     | '/workspace/$id'
+    | '/demo/'
+    | '/demo/match/$matchId'
+    | '/demo/wish/$wishId/confirm'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -185,9 +235,14 @@ export interface FileRouteTypes {
     | '/signup'
     | '/workspaces'
     | '/blueprint/$id'
+    | '/demo/wanted'
+    | '/demo/wish'
     | '/gadget/$id'
     | '/gatekeepers/$appId'
     | '/workspace/$id'
+    | '/demo'
+    | '/demo/match/$matchId'
+    | '/demo/wish/$wishId/confirm'
   id:
     | '__root__'
     | '/'
@@ -202,9 +257,14 @@ export interface FileRouteTypes {
     | '/signup'
     | '/workspaces'
     | '/blueprint/$id'
+    | '/demo/wanted'
+    | '/demo/wish'
     | '/gadget/$id'
     | '/gatekeepers_/$appId'
     | '/workspace/$id'
+    | '/demo/'
+    | '/demo/match/$matchId'
+    | '/demo/wish_/$wishId/confirm'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -220,9 +280,14 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   WorkspacesRoute: typeof WorkspacesRoute
   BlueprintIdRoute: typeof BlueprintIdRoute
+  DemoWantedRoute: typeof DemoWantedRoute
+  DemoWishRoute: typeof DemoWishRoute
   GadgetIdRoute: typeof GadgetIdRoute
   GatekeepersAppIdRoute: typeof GatekeepersAppIdRoute
   WorkspaceIdRoute: typeof WorkspaceIdRoute
+  DemoIndexRoute: typeof DemoIndexRoute
+  DemoMatchMatchIdRoute: typeof DemoMatchMatchIdRoute
+  DemoWishWishIdConfirmRoute: typeof DemoWishWishIdConfirmRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -311,6 +376,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlueprintIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo/': {
+      id: '/demo/'
+      path: '/demo'
+      fullPath: '/demo/'
+      preLoaderRoute: typeof DemoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/wanted': {
+      id: '/demo/wanted'
+      path: '/demo/wanted'
+      fullPath: '/demo/wanted'
+      preLoaderRoute: typeof DemoWantedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/wish': {
+      id: '/demo/wish'
+      path: '/demo/wish'
+      fullPath: '/demo/wish'
+      preLoaderRoute: typeof DemoWishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gadget/$id': {
       id: '/gadget/$id'
       path: '/gadget/$id'
@@ -332,6 +418,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkspaceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo/match/$matchId': {
+      id: '/demo/match/$matchId'
+      path: '/demo/match/$matchId'
+      fullPath: '/demo/match/$matchId'
+      preLoaderRoute: typeof DemoMatchMatchIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/wish_/$wishId/confirm': {
+      id: '/demo/wish_/$wishId/confirm'
+      path: '/demo/wish/$wishId/confirm'
+      fullPath: '/demo/wish/$wishId/confirm'
+      preLoaderRoute: typeof DemoWishWishIdConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -348,9 +448,14 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   WorkspacesRoute: WorkspacesRoute,
   BlueprintIdRoute: BlueprintIdRoute,
+  DemoWantedRoute: DemoWantedRoute,
+  DemoWishRoute: DemoWishRoute,
   GadgetIdRoute: GadgetIdRoute,
   GatekeepersAppIdRoute: GatekeepersAppIdRoute,
   WorkspaceIdRoute: WorkspaceIdRoute,
+  DemoIndexRoute: DemoIndexRoute,
+  DemoMatchMatchIdRoute: DemoMatchMatchIdRoute,
+  DemoWishWishIdConfirmRoute: DemoWishWishIdConfirmRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
